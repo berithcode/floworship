@@ -1,0 +1,75 @@
+.dashboard {
+  min-height: 100vh;
+  background-color: var(--color-bg-primary);
+  padding-bottom: 80px;
+}
+
+.dashboard-header {
+  background-color: var(--color-bg-card);
+  padding: 24px;
+  border-bottom: 1px solid var(--color-bg-card-elevated);
+}
+
+.dashboard-greeting {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0 0 4px;
+}
+
+.dashboard-subtitle {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.dashboard-content {
+  padding: 24px;
+}
+
+.dashboard-section {
+  margin-bottom: 32px;
+}
+
+.dashboard-section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 16px;
+}
+
+.dashboard-quick-actions {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.dashboard-action-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 20px;
+  background-color: var(--color-bg-card);
+  border: none;
+  border-radius: var(--radius-card);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.dashboard-action-card:hover {
+  background-color: var(--color-bg-card-elevated);
+}
+
+.dashboard-action-icon {
+  font-size: 28px;
+}
+
+.dashboard-action-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}

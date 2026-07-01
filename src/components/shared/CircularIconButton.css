@@ -1,0 +1,31 @@
+.circular-icon-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background-color: var(--color-bg-card-elevated);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.circular-icon-button:focus-visible {
+  outline: 2px solid var(--color-accent-primary);
+  outline-offset: 2px;
+}
+
+.circular-icon-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.circular-icon-button svg {
+  width: 20px;
+  height: 20px;
+}
