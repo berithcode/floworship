@@ -6,6 +6,11 @@ import { Dashboard } from './pages/dashboard/Dashboard';
 import { SongList } from './pages/library/SongList';
 import { SongDetail } from './pages/library/SongDetail';
 import { NewSong } from './pages/library/NewSong';
+import { ModoOperador } from './pages/performance/ModoOperador';
+import { ModoLetra } from './pages/performance/ModoLetra';
+import { ModoCifra } from './pages/performance/ModoCifra';
+import { ModoTV } from './pages/performance/ModoTV';
+import { SessionEnd } from './pages/performance/SessionEnd';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -123,6 +128,39 @@ function App() {
           }
         />
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route
+          path="/session/:sessionId/operador"
+          element={
+            <ProtectedRoute>
+              <ModoOperador sessionId={window.location.pathname.split('/')[2]} ministryId="current" />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/session/:sessionId/letra"
+          element={
+            <ProtectedRoute>
+              <ModoLetra sessionId={window.location.pathname.split('/')[2]} ministryId="current" />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/session/:sessionId/cifra"
+          element={
+            <ProtectedRoute>
+              <ModoCifra sessionId={window.location.pathname.split('/')[2]} ministryId="current" />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/session/:sessionId/tv"
+          element={
+            <ProtectedRoute>
+              <ModoTV sessionId={window.location.pathname.split('/')[2]} ministryId="current" />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/session/end" element={<SessionEnd />} />
       </Routes>
     </BrowserRouter>
   );

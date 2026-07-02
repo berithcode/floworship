@@ -1,0 +1,66 @@
+.modo-letra {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.modo-letra__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-s) var(--spacing-m);
+  border-bottom: 1px solid var(--border-default);
+}
+
+.modo-letra__title {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.modo-letra__toggle {
+  padding: var(--spacing-xxs) var(--spacing-s);
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  border: 1px solid var(--border-default);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.modo-letra__toggle--active {
+  background: var(--accent-primary);
+  color: var(--text-on-accent);
+  border-color: var(--accent-primary);
+}
+
+.modo-letra__content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--spacing-l) var(--spacing-m);
+}
+
+.modo-letra__lyrics {
+  font-family: 'Courier New', monospace;
+  font-size: 1.125rem;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  margin: 0;
+}
+
+.modo-letra__placeholder {
+  color: var(--text-tertiary);
+  font-style: italic;
+}
+
+.modo-letra__preview {
+  padding: var(--spacing-s) var(--spacing-m);
+  border-top: 1px solid var(--border-default);
+  background: var(--bg-secondary);
+}
+
+.modo-letra__preview-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}

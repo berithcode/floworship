@@ -1,0 +1,38 @@
+.session-end {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.session-end__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-l);
+  text-align: center;
+}
+
+.session-end__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.session-end__message {
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.session-end__btn {
+  padding: var(--spacing-s) var(--spacing-l);
+  border-radius: var(--radius-full);
+  background: var(--accent-primary);
+  color: var(--text-on-accent);
+  border: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+}

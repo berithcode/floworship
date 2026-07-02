@@ -1,0 +1,62 @@
+.modo-cifra {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.modo-cifra__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-s) var(--spacing-m);
+  border-bottom: 1px solid var(--border-default);
+  gap: var(--spacing-s);
+}
+
+.modo-cifra__title {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.modo-cifra__key {
+  font-size: 0.875rem;
+  color: var(--accent-primary);
+  font-weight: 500;
+}
+
+.modo-cifra__toggle {
+  padding: var(--spacing-xxs) var(--spacing-s);
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  border: 1px solid var(--border-default);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.modo-cifra__toggle--active {
+  background: var(--accent-primary);
+  color: var(--text-on-accent);
+  border-color: var(--accent-primary);
+}
+
+.modo-cifra__content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--spacing-l) var(--spacing-m);
+}
+
+.modo-cifra__chords {
+  font-family: 'Courier New', monospace;
+  font-size: 1.125rem;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  margin: 0;
+}
+
+.modo-cifra__placeholder {
+  color: var(--text-tertiary);
+  font-style: italic;
+}
