@@ -16,7 +16,11 @@
     "test:integration": "vitest run src --include '**/*.integration.test.*'",
     "test:watch": "vitest",
     "db:migrate": "prisma migrate dev",
-    "db:generate": "prisma generate"
+    "db:generate": "prisma generate",
+    "db:seed": "tsx prisma/seed.ts"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
     "@fastify/cookie": "^11.0.2",
@@ -25,12 +29,15 @@
     "@fastify/rate-limit": "^11.1.0",
     "@prisma/client": "^6.19.3",
     "argon2": "^0.44.0",
+    "dexie": "^4.0.0",
+    "dexie-react-hooks": "^1.1.7",
     "dotenv": "^17.4.2",
     "fastify": "^5.9.0",
     "lucide-react": "^0.344.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.22.0"
+    "react-router-dom": "^6.22.0",
+    "zod": "^3.23.0"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.4.2",

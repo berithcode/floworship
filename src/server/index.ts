@@ -2,6 +2,8 @@ import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import cookie from '@fastify/cookie';
 import { authRoutes } from './routes/auth';
+import { songsRoutes } from './routes/songs';
+import { ministriesRoutes, schedulesRoutes } from './routes/ministries';
 import { prisma } from './db';
 
 const PORT = Number(process.env.PORT) || 3001;
@@ -21,6 +23,9 @@ async function build() {
   });
 
   await fastify.register(authRoutes, { prefix: '/api' });
+  await fastify.register(songsRoutes, { prefix: '/api' });
+  await fastify.register(ministriesRoutes, { prefix: '/api' });
+  await fastify.register(schedulesRoutes, { prefix: '/api' });
 
   return fastify;
 }

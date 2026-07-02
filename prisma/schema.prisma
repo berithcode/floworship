@@ -21,6 +21,12 @@ model User {
   sessions        Session[]
   sentInvites     Invite[]  @relation("invitedBy")
   passwordResets  PasswordResetToken[]
+  createdSongs    Song[]
+  serviceAssignments ServiceAssignment[]
+  sessionLogs     SessionExecutionLog[]
+  musicians       Musician[]
+  whatsappLogs    WhatsAppMessageLog[]
+  createdSchedules ServiceSchedule[]
 }
 
 model Ministry {
@@ -29,8 +35,12 @@ model Ministry {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  members MinistryMember[]
-  invites Invite[]
+  members   MinistryMember[]
+  invites   Invite[]
+  songs     Song[]
+  schedules ServiceSchedule[]
+  musicians Musician[]
+  whatsappLogs WhatsAppMessageLog[]
 }
 
 model MinistryMember {
@@ -94,4 +104,121 @@ model PasswordResetToken {
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Song {
+  id        String   @id @default(cuid())
+  title     String
+  artist    String?
+  defaultKey String?
+  tags      String   @default("[]")
+  status    String   @default("rascunho")
+  notes     String?
+  ministryId String
+  createdById String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  ministry     Ministry @relation(fields: [ministryId], references: [id], onDelete: Cascade)
+  createdBy    User     @relation(fields: [createdById], references: [id])
+  cueSheet     SongCueSheet?
+  repertoireItems ServiceRepertoireItem[]
+}
+
+model SongCueSheet {
+  id                 String   @id @default(cuid())
+  songId             String   @unique
+  referenceTrackUrl  String?
+  totalDurationSeconds Float?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  song   Song      @relation(fields: [songId], references: [id], onDelete: Cascade)
+  blocks CueBlock[]
+}
+
+model CueBlock {
+  id          String   @id @default(cuid())
+  cueSheetId  String
+  label       String
+  startTime   Float
+  endTime     Float
+  duration    Float
+  chordproContent String?
+  order       Int
+
+  cueSheet SongCueSheet @relation(fields: [cueSheetId], references: [id], onDelete: Cascade)
+  sessionLogs SessionExecutionLog[]
+}
+
+model ServiceSchedule {
+  id          String   @id @default(cuid())
+  ministryId  String
+  date        DateTime
+  createdById String
+  createdAt   DateTime @default(now())
+
+  ministry     Ministry @relation(fields: [ministryId], references: [id], onDelete: Cascade)
+  createdBy    User     @relation(fields: [createdById], references: [id])
+  assignments  ServiceAssignment[]
+  repertoire   ServiceRepertoireItem[]
+}
+
+model ServiceAssignment {
+  id          String   @id @default(cuid())
+  scheduleId  String
+  userId      String
+  role        String
+  confirmed   Boolean  @default(false)
+  confirmedAt DateTime?
+
+  schedule ServiceSchedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  user     User            @relation(fields: [userId], references: [id])
+}
+
+model ServiceRepertoireItem {
+  id          String   @id @default(cuid())
+  scheduleId  String
+  songId      String
+  order       Int
+  keyOverride String?
+
+  schedule ServiceSchedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  song     Song            @relation(fields: [songId], references: [id])
+}
+
+model SessionExecutionLog {
+  id              String   @id @default(cuid())
+  sessionId       String
+  blockId         String
+  triggeredAt     DateTime @default(now())
+  wasOverride     Boolean  @default(false)
+  triggeredByUserId String
+  durationSeconds Float?
+
+  sessionId_unique String   @unique
+  block        CueBlock   @relation(fields: [blockId], references: [id])
+  triggeredBy  User       @relation(fields: [triggeredByUserId], references: [id])
+}
+
+model Musician {
+  id          String   @id @default(cuid())
+  userId      String
+  instrument  String
+  ministryId  String
+  createdAt   DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id])
+  ministry Ministry @relation(fields: [ministryId], references: [id], onDelete: Cascade)
+}
+
+model WhatsAppMessageLog {
+  id          String   @id @default(cuid())
+  ministryId  String
+  message     String
+  sentById    String
+  sentAt      DateTime @default(now())
+
+  ministry Ministry @relation(fields: [ministryId], references: [id], onDelete: Cascade)
+  sentBy   User     @relation(fields: [sentById], references: [id])
 }
