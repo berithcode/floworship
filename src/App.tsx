@@ -3,6 +3,9 @@ import { useState, useEffect } from 'react';
 import { LoginPage } from './pages/auth/LoginPage';
 import { MinistrySelector } from './pages/dashboard/MinistrySelector';
 import { Dashboard } from './pages/dashboard/Dashboard';
+import { SongList } from './pages/library/SongList';
+import { SongDetail } from './pages/library/SongDetail';
+import { NewSong } from './pages/library/NewSong';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -92,6 +95,30 @@ function App() {
           element={
             <ProtectedRoute>
               <AuthenticatedLayout />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/library"
+          element={
+            <ProtectedRoute>
+              <SongList />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/library/new"
+          element={
+            <ProtectedRoute>
+              <NewSong />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/library/:id"
+          element={
+            <ProtectedRoute>
+              <SongDetail />
             </ProtectedRoute>
           }
         />

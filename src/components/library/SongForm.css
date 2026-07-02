@@ -1,0 +1,69 @@
+.song-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 480px;
+}
+
+.song-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.song-form .form-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.song-form .form-input {
+  padding: 10px 14px;
+  background-color: var(--color-bg-card);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: var(--color-text-primary);
+  font-size: 14px;
+  transition: border-color 0.15s ease;
+}
+
+.song-form .form-input:focus {
+  outline: none;
+  border-color: var(--color-accent-primary);
+}
+
+.song-form .form-input-error {
+  border-color: var(--color-danger);
+}
+
+.song-form .form-error {
+  font-size: 12px;
+  color: var(--color-danger);
+}
+
+.song-form .form-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.song-form-submit {
+  padding: 12px 24px;
+  background-color: var(--color-accent-primary);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+  align-self: flex-start;
+}
+
+.song-form-submit:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.song-form-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
