@@ -11,6 +11,8 @@ import { ModoLetra } from './pages/performance/ModoLetra';
 import { ModoCifra } from './pages/performance/ModoCifra';
 import { ModoTV } from './pages/performance/ModoTV';
 import { SessionEnd } from './pages/performance/SessionEnd';
+import { StudyMode } from './pages/study/StudyMode';
+import { ScheduleDashboard } from './pages/admin/ScheduleDashboard';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -161,6 +163,22 @@ function App() {
           }
         />
         <Route path="/session/end" element={<SessionEnd />} />
+        <Route
+          path="/library/:songId/study"
+          element={
+            <ProtectedRoute>
+              <StudyMode />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/schedules"
+          element={
+            <ProtectedRoute>
+              <ScheduleDashboard />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

@@ -90,6 +90,12 @@ export function SongDetail() {
         >
           History
         </button>
+        <button
+          className="song-detail-tab song-detail-tab--study"
+          onClick={() => navigate(`/library/${id}/study`)}
+        >
+          Estudar
+        </button>
       </div>
 
       <div className="song-detail-content">

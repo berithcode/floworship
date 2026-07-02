@@ -1,0 +1,49 @@
+.tuner-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-s);
+  padding: var(--spacing-l);
+  background: var(--bg-card-elevated);
+  border-radius: var(--radius-lg);
+}
+
+.tuner-placeholder__title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.tuner-placeholder__note {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.tuner-placeholder__cents {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.tuner-placeholder__presets {
+  display: flex;
+  gap: var(--spacing-xs);
+}
+
+.tuner-placeholder__preset {
+  padding: var(--spacing-xxs) var(--spacing-s);
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+}
+
+.tuner-placeholder__preset--active {
+  background: var(--accent-primary);
+  color: var(--text-on-accent);
+}
+
+.tuner-placeholder__message {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  font-style: italic;
+}

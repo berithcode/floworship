@@ -41,6 +41,7 @@ model Ministry {
   schedules ServiceSchedule[]
   musicians Musician[]
   whatsappLogs WhatsAppMessageLog[]
+  cycles    MonthlyScheduleCycle[]
 }
 
 model MinistryMember {
@@ -169,6 +170,9 @@ model ServiceAssignment {
   scheduleId  String
   userId      String
   role        String
+  musicianId  String?
+  status      String   @default("confirmado")
+  substitutionOf String?
   confirmed   Boolean  @default(false)
   confirmedAt DateTime?
 
@@ -205,6 +209,7 @@ model Musician {
   userId      String
   instrument  String
   ministryId  String
+  worshipRoles String  @default("[]")
   createdAt   DateTime @default(now())
 
   user     User     @relation(fields: [userId], references: [id])
@@ -220,4 +225,23 @@ model WhatsAppMessageLog {
 
   ministry Ministry @relation(fields: [ministryId], references: [id], onDelete: Cascade)
   sentBy   User     @relation(fields: [sentById], references: [id])
+}
+
+model MonthlyScheduleCycle {
+  id                String   @id @default(cuid())
+  ministryId        String
+  month             Int
+  year              Int
+  status            String   @default("coletando_disponibilidade")
+  availabilityDeadline DateTime
+
+  ministry Ministry @relation(fields: [ministryId], references: [id], onDelete: Cascade)
+}
+
+model MinistryConfig {
+  ministryId               String   @id
+  defaultFormation         String   @default("[]")
+  availabilityDeadlineDays Int      @default(5)
+  substitutionWindowHours  Int      @default(4)
+  cycleTriggerDay          Int      @default(20)
 }

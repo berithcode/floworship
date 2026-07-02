@@ -1,0 +1,29 @@
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-m);
+}
+
+.page-header__title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.page-header__description {
+  margin: var(--spacing-xxs) 0 0;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.page-header__action {
+  padding: var(--spacing-s) var(--spacing-m);
+  border-radius: var(--radius-full);
+  background: var(--accent-primary);
+  color: var(--text-on-accent);
+  border: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+}
