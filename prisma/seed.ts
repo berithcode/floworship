@@ -1,9 +1,14 @@
 import { PrismaClient } from '@prisma/client';
+import * as argon2 from 'argon2';
 
 const prisma = new PrismaClient();
 
 async function main() {
   console.log('Seeding database...');
+
+  const adminPasswordHash = await argon2.hash('admin123');
+  const operatorPasswordHash = await argon2.hash('operator123');
+  const musicianPasswordHash = await argon2.hash('musician123');
 
   await prisma.sessionExecutionLog.deleteMany();
   await prisma.serviceRepertoireItem.deleteMany();
@@ -25,7 +30,7 @@ async function main() {
   const admin = await prisma.user.create({
     data: {
       email: 'admin@floworship.com',
-      passwordHash: '$argon2id$v=19$m=65536,t=3,p=4$placeholder',
+      passwordHash: adminPasswordHash,
       name: 'Admin User',
     },
   });
@@ -33,7 +38,7 @@ async function main() {
   const operator = await prisma.user.create({
     data: {
       email: 'operator@floworship.com',
-      passwordHash: '$argon2id$v=19$m=65536,t=3,p=4$placeholder',
+      passwordHash: operatorPasswordHash,
       name: 'Operator User',
     },
   });
@@ -41,7 +46,7 @@ async function main() {
   const musician = await prisma.user.create({
     data: {
       email: 'musician@floworship.com',
-      passwordHash: '$argon2id$v=19$m=65536,t=3,p=4$placeholder',
+      passwordHash: musicianPasswordHash,
       name: 'Musician User',
     },
   });
