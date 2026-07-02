@@ -196,7 +196,6 @@ model SessionExecutionLog {
   triggeredByUserId String
   durationSeconds Float?
 
-  sessionId_unique String   @unique
   block        CueBlock   @relation(fields: [blockId], references: [id])
   triggeredBy  User       @relation(fields: [triggeredByUserId], references: [id])
 }
