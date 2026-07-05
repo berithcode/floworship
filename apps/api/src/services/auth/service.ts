@@ -1,4 +1,4 @@
-import { prisma } from '../../db';
+import { prisma, basePrisma } from '../../db';
 import { generateToken } from './utils';
 export { hashPassword, verifyPassword, generateToken, generateTokens } from './utils';
 
@@ -94,7 +94,7 @@ export async function createSession(
   userAgent?: string,
   ip?: string
 ): Promise<string> {
-  const session = await prisma.userSession.create({
+  const session = await basePrisma.userSession.create({
     data: {
       userId,
       userAgent,
@@ -105,11 +105,11 @@ export async function createSession(
 }
 
 export async function revokeSession(sessionId: string): Promise<void> {
-  await prisma.userSession.delete({ where: { id: sessionId } });
+  await basePrisma.userSession.delete({ where: { id: sessionId } });
 }
 
 export async function getUserSessions(userId: string) {
-  return prisma.userSession.findMany({
+  return basePrisma.userSession.findMany({
     where: { userId },
     orderBy: { createdAt: 'desc' },
   });

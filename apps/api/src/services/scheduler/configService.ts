@@ -20,7 +20,7 @@ export async function getConfig(ministryId: string): Promise<MinistryConfig> {
   if (existing) {
     return {
       ministryId: existing.ministryId,
-      defaultFormation: existing.defaultFormation as string[],
+      defaultFormation: existing.defaultFormation as unknown as string[],
       availabilityDeadlineDays: existing.availabilityDeadlineDays,
       substitutionWindowHours: existing.substitutionWindowHours,
       cycleTriggerDay: existing.cycleTriggerDay,

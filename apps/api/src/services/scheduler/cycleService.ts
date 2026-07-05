@@ -181,7 +181,7 @@ export async function cancelCycle(cycleId: string) {
   // Soft delete do ciclo
   await prisma.monthlyScheduleCycle.update({
     where: { id: cycleId },
-    data: { deletedAt: new Date() },
+    data: { deletedAt: new Date() } as any,
   });
 
   return { success: true };
@@ -194,7 +194,7 @@ async function getFormation(ministryId: string): Promise<string[]> {
 
   if (config?.defaultFormation) {
     try {
-      const formation = config.defaultFormation as string[];
+      const formation = config.defaultFormation as unknown as string[];
       if (Array.isArray(formation) && formation.length > 0) {
         return formation;
       }
@@ -266,7 +266,7 @@ async function generateScheduleForCycle(cycleId: string) {
     userId: m.userId,
     timesServedThisMonth: countMap.get(m.id) || 0,
     lastServedAt: lastServedMap.get(m.id) || {} as Record<string, Date>,
-    worshipRoles: (m.worshipRoles as string[]) || [],
+    worshipRoles: (m.worshipRoles as unknown as string[]) || [],
   }));
 
   console.log(`[Scheduler] Candidatos:`, candidates.map(c => `${c.worshipRoles.join(',')}`).join(' | '));
