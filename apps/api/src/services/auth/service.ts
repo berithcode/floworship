@@ -94,7 +94,7 @@ export async function createSession(
   userAgent?: string,
   ip?: string
 ): Promise<string> {
-  const session = await basePrisma.userSession.create({
+  const session = await (basePrisma as any).userSession.create({
     data: {
       userId,
       userAgent,
@@ -105,11 +105,11 @@ export async function createSession(
 }
 
 export async function revokeSession(sessionId: string): Promise<void> {
-  await basePrisma.userSession.delete({ where: { id: sessionId } });
+  await (basePrisma as any).userSession.delete({ where: { id: sessionId } });
 }
 
 export async function getUserSessions(userId: string) {
-  return basePrisma.userSession.findMany({
+  return (basePrisma as any).userSession.findMany({
     where: { userId },
     orderBy: { createdAt: 'desc' },
   });
