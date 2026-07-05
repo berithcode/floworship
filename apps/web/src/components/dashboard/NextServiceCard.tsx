@@ -18,7 +18,7 @@ interface NextServiceCardProps {
 
 export const NextServiceCard = memo(function NextServiceCard({
   date,
-  confirmed,
+  confirmed: _confirmed,
   repertoireCount = 0,
   className = '',
   upcomingServices = []

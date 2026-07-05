@@ -17,7 +17,7 @@ export const ChordProPreview = memo(function ChordProPreview({
   transposeValue = 0,
   onTransposeChange,
   mode = 'cifra',
-  onModeChange,
+  onModeChange: _onModeChange,
   defaultKey,
 }: ChordProPreviewProps) {
   const parsed = useMemo(() => {

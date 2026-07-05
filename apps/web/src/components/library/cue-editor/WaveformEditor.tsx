@@ -64,10 +64,9 @@ export const WaveformEditor = memo(function WaveformEditor({
       wavesurferRef.current.on('play', () => setPlaying(true));
       wavesurferRef.current.on('finish', () => setPlaying(false));
       wavesurferRef.current.on('pause', () => setPlaying(false));
-      wavesurferRef.current.on('error', (err: any) => {
+      wavesurferRef.current.on('error', (_err: any) => {
         if (cancelled) return;
         setLoading(false);
-        const msg = typeof err === 'string' ? err : err?.message || '';
         if (isGoogleDriveUrl(audioUrl)) {
           setError('DRIVE_CORS');
         } else {
