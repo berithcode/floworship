@@ -1,0 +1,59 @@
+.takeover-layout {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  background: var(--bg-primary);
+}
+
+.takeover-layout__exit {
+  position: absolute;
+  top: var(--spacing-s);
+  right: var(--spacing-s);
+  z-index: 901;
+  padding: var(--spacing-xxs) var(--spacing-s);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-default);
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.takeover-layout__content {
+  height: 100%;
+}
+
+.takeover-layout__overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.takeover-layout__dialog {
+  background: var(--bg-card-elevated);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-l);
+  min-width: 240px;
+}
+
+.takeover-layout__dialog p {
+  margin: 0 0 var(--spacing-m);
+}
+
+.takeover-layout__actions {
+  display: flex;
+  gap: var(--spacing-s);
+  justify-content: flex-end;
+}
+
+.takeover-layout__actions button {
+  padding: var(--spacing-s) var(--spacing-m);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-default);
+  background: var(--bg-primary);
+  cursor: pointer;
+}

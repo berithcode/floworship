@@ -1,29 +1,92 @@
-import { useLocation, useNavigate } from 'react-router-dom';
-import './BottomNav.css';
+import { Home, Compass, Library, User } from 'lucide-react';
 
-const NAV_ITEMS = [
-  { label: 'Inicio', path: '/dashboard', icon: 'home' },
-  { label: 'Repertorio', path: '/library', icon: 'music' },
-  { label: 'Escala', path: '/schedules', icon: 'calendar' },
-  { label: 'Perfil', path: '/profile', icon: 'user' },
-];
+interface BottomNavItem {
+  icon: typeof Home;
+  label: string;
+  isActive?: boolean;
+  onClick?: () => void;
+}
 
-export function BottomNav() {
-  const location = useLocation();
-  const navigate = useNavigate();
+function BottomNavItem({ icon: Icon, label, isActive, onClick }: BottomNavItem) {
+  return (
+    <button
+      onClick={onClick}
+      className="flex-1 flex flex-col items-center justify-center gap-1 py-2 relative"
+    >
+      {/* Active indicator background */}
+      {isActive && (
+        <div
+          className="absolute inset-0 rounded-2xl"
+          style={{
+            background:
+              'linear-gradient(135deg, rgba(58, 134, 255, 0.2) 0%, rgba(131, 56, 236, 0.2) 100%)',
+            backdropFilter: 'blur(12px)',
+          }}
+        />
+      )}
+
+      {/* Icon */}
+      <Icon
+        className={`w-6 h-6 relative z-10 transition-all duration-300 ${
+          isActive
+            ? 'text-white'
+            : 'text-white/60 hover:text-white/80'
+        }`}
+        strokeWidth={1.5}
+        style={{
+          transform: isActive ? 'scale(1.1)' : 'scale(1)',
+        }}
+      />
+
+      {/* Label */}
+      <span
+        className={`text-xs font-medium relative z-10 transition-colors duration-300 ${
+          isActive ? 'text-white' : 'text-white/60'
+        }`}
+      >
+        {label}
+      </span>
+    </button>
+  );
+}
+
+export interface BottomNavProps {
+  activeTab?: 'home' | 'explore' | 'library' | 'profile';
+  onTabChange?: (tab: 'home' | 'explore' | 'library' | 'profile') => void;
+}
+
+export function BottomNav({
+  activeTab = 'home',
+  onTabChange,
+}: BottomNavProps) {
+  const tabs: BottomNavItem[] = [
+    { icon: Home, label: 'Home', isActive: activeTab === 'home' },
+    { icon: Compass, label: 'Explore', isActive: activeTab === 'explore' },
+    { icon: Library, label: 'Library', isActive: activeTab === 'library' },
+    { icon: User, label: 'Profile', isActive: activeTab === 'profile' },
+  ];
 
   return (
-    <nav className="bottom-nav">
-      {NAV_ITEMS.map((item) => (
-        <button
-          key={item.path}
-          className={`bottom-nav__item ${location.pathname.startsWith(item.path) ? 'bottom-nav__item--active' : ''}`}
-          onClick={() => navigate(item.path)}
-        >
-          <span className="bottom-nav__icon">{item.icon}</span>
-          <span className="bottom-nav__label">{item.label}</span>
-        </button>
-      ))}
+    <nav
+      className="fixed bottom-0 left-0 right-0 z-50"
+      style={{
+        background: 'rgba(26, 26, 26, 0.6)',
+        backdropFilter: 'blur(16px)',
+        borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+        paddingBottom: 'env(safe-area-inset-bottom)',
+      }}
+    >
+      <div className="flex items-center">
+        {tabs.map((tab) => (
+          <BottomNavItem
+            key={tab.label}
+            icon={tab.icon}
+            label={tab.label}
+            isActive={tab.isActive}
+            onClick={() => onTabChange?.(tab.label.toLowerCase() as any)}
+          />
+        ))}
+      </div>
     </nav>
   );
 }

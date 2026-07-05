@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 
-const USE_MOCKS = true;
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+const USE_MOCKS = false;
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4001/api';
 
 interface NextServiceData {
   id: string;
@@ -16,6 +16,7 @@ interface DashboardMetrics {
   totalMusicians: number;
   songsReady: number;
   cycleStatus: 'coletando_disponibilidade' | 'gerando' | 'aguardando_aprovacao' | 'publicada' | 'nenhum';
+  cycleId?: string;
   cycleDeadline?: string;
 }
 
@@ -40,6 +41,7 @@ const mockMetrics: DashboardMetrics = {
   totalMusicians: 24,
   songsReady: 42,
   cycleStatus: 'coletando_disponibilidade',
+  cycleId: 'mock-cycle-1',
   cycleDeadline: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString()
 };
 

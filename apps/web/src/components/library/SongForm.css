@@ -1,0 +1,95 @@
+.song-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 480px;
+}
+
+.song-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.song-form .form-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-tertiary);
+  letter-spacing: 0.02em;
+}
+
+.song-form .form-input {
+  padding: 10px 14px;
+  background-color: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 10px;
+  color: var(--color-text-primary);
+  font-size: 14px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.song-form .form-input:hover {
+  border-color: var(--color-border-strong);
+}
+
+.song-form .form-input:focus {
+  outline: none;
+  border-color: var(--color-accent-mint);
+  box-shadow: 0 0 0 3px var(--color-accent-mint-dim);
+}
+
+.song-form .form-input::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+.song-form .form-input-error {
+  border-color: var(--color-danger);
+}
+
+.song-form .form-input-error:focus {
+  box-shadow: 0 0 0 3px rgba(255, 92, 92, 0.15);
+}
+
+.song-form .form-error {
+  font-size: 12px;
+  color: var(--color-danger);
+}
+
+.song-form .form-textarea {
+  resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+}
+
+.song-form select.form-input {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23A3A3A3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+  cursor: pointer;
+}
+
+.song-form-submit {
+  padding: 12px 24px;
+  background-color: var(--color-accent-mint);
+  border: none;
+  border-radius: 10px;
+  color: var(--color-text-on-mint);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s ease, box-shadow 0.15s ease;
+  align-self: flex-start;
+  margin-top: 4px;
+}
+
+.song-form-submit:hover:not(:disabled) {
+  opacity: 0.9;
+  box-shadow: 0 4px 16px var(--color-accent-mint-dim);
+}
+
+.song-form-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

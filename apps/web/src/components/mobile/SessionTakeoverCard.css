@@ -1,0 +1,24 @@
+.takeover-card {
+  margin: var(--spacing-m);
+  padding: var(--spacing-m);
+  border-radius: var(--radius-lg);
+  background: var(--accent-primary);
+  color: var(--text-on-accent);
+  cursor: pointer;
+}
+
+.takeover-card__content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.takeover-card__text {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.takeover-card__action {
+  font-size: 0.75rem;
+  opacity: 0.9;
+}

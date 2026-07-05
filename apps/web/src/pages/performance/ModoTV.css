@@ -1,0 +1,38 @@
+.modo-tv {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.modo-tv__main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-l);
+}
+
+.modo-tv__info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.modo-tv__block-name {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.modo-tv__timing {
+  font-size: 1.5rem;
+  color: var(--text-secondary);
+}
+
+.modo-tv__sequence {
+  font-size: 1rem;
+  color: var(--text-tertiary);
+}

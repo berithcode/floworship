@@ -1,0 +1,29 @@
+.pill-toggle {
+  display: inline-flex;
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-pill);
+  padding: 4px;
+  gap: 4px;
+}
+
+.pill-toggle-option {
+  padding: 8px 16px;
+  border: none;
+  border-radius: var(--radius-pill);
+  background-color: transparent;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.pill-toggle-option.active {
+  background-color: var(--color-text-primary);
+  color: var(--color-bg-primary);
+}
+
+.pill-toggle-option:focus-visible {
+  outline: 2px solid var(--color-accent-primary);
+  outline-offset: 2px;
+}

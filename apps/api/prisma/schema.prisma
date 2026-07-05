@@ -1,0 +1,369 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum AssignmentStatus {
+  vago
+  confirmado
+  recusado
+}
+
+enum CycleStatus {
+  coletando_disponibilidade
+  gerando
+  aguardando_aprovacao
+  publicada
+  cancelada
+}
+
+enum SongStatus {
+  rascunho
+  pronta
+  arquivada
+}
+
+enum MessageStatus {
+  enviado
+  entregue
+  lido
+  falhou
+}
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  passwordHash  String
+  name          String
+  googleId      String?  @unique
+  whatsappPhone String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  ministryMembers MinistryMember[]
+  refreshTokens   RefreshToken[]
+  userSessions  UserSession[]
+  sentInvites     Invite[]  @relation("invitedBy")
+  passwordResets  PasswordResetToken[]
+  createdSongs    Song[]
+  sessionLogs     SessionExecutionLog[]
+  whatsappLogs    WhatsAppMessageLog[]
+  createdSchedules ServiceSchedule[]
+}
+
+model Ministry {
+  id          String   @id @default(cuid())
+  name        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  members   MinistryMember[]
+  invites   Invite[]
+  songs     Song[]
+  schedules ServiceSchedule[]
+  notificationLogs NotificationLog[]
+  whatsappLogs WhatsAppMessageLog[]
+  cycles    MonthlyScheduleCycle[]
+  config    MinistryConfig?
+}
+
+model MinistryMember {
+  id                  String   @id @default(cuid())
+  userId              String
+  ministryId          String
+  role                String   @default("musician")
+  worshipRoles        String   @default("[]")
+  instrument          String?
+  isActiveInSchedule  Boolean  @default(true)
+  timesServedThisMonth Int     @default(0)
+  lastServedAt        String   @default("{}")
+  telegramChatId      String?
+  telegramUsername    String?
+  telegramLinkToken   String?
+  whatsappPhone       String?
+  whatsappOptIn       Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  user         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ministry     Ministry            @relation(fields: [ministryId], references: [id], onDelete: Cascade)
+  assignments  ServiceAssignment[]
+  notificationLogs NotificationLog[]
+  availabilityResponses AvailabilityResponse[]
+
+  @@unique([userId, ministryId])
+  @@index([ministryId, role])
+  @@index([ministryId, isActiveInSchedule])
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  revokedAt DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+}
+
+model UserSession {
+  id        String   @id @default(cuid())
+  userId    String
+  userAgent String?
+  ip        String?
+  lastActiveAt DateTime @default(now())
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Invite {
+  id         String   @id @default(cuid())
+  token      String   @unique
+  email      String?
+  phone      String?
+  name       String
+  ministryId String
+  role       String   @default("musician")
+  expiresAt  DateTime
+  usedAt     DateTime?
+  usedByUserId String?
+  invitedById  String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  ministry Ministry @relation(fields: [ministryId], references: [id], onDelete: Cascade)
+  invitedBy User @relation("invitedBy", fields: [invitedById], references: [id])
+
+  @@index([phone])
+  @@index([ministryId, usedAt])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Song {
+  id        String   @id @default(cuid())
+  title     String
+  artist    String?
+  defaultKey String?
+  tags      String   @default("[]")
+  status    String   @default("rascunho")
+  notes     String?
+  ministryId String
+  createdById String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  ministry     Ministry @relation(fields: [ministryId], references: [id], onDelete: Cascade)
+  createdBy    User     @relation(fields: [createdById], references: [id])
+  cueSheet     SongCueSheet?
+  repertoireItems ServiceRepertoireItem[]
+
+  @@index([ministryId, status])
+}
+
+model SongCueSheet {
+  id                 String   @id @default(cuid())
+  songId             String   @unique
+  referenceTrackUrl  String?
+  totalDurationSeconds Float?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  song   Song      @relation(fields: [songId], references: [id], onDelete: Cascade)
+  blocks CueBlock[]
+}
+
+model CueBlock {
+  id          String   @id @default(cuid())
+  cueSheetId  String
+  label       String
+  startTime   Float
+  endTime     Float
+  duration    Float
+  chordproContent String?
+  order       Int
+
+  cueSheet SongCueSheet @relation(fields: [cueSheetId], references: [id], onDelete: Cascade)
+  sessionLogs SessionExecutionLog[]
+
+  @@index([cueSheetId])
+}
+
+model ServiceSchedule {
+  id          String    @id @default(cuid())
+  ministryId  String
+  cycleId     String?
+  date        DateTime
+  createdById String
+  sessionType String    @default("ensaio")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  ministry     Ministry              @relation(fields: [ministryId], references: [id], onDelete: Cascade)
+  createdBy    User                  @relation(fields: [createdById], references: [id])
+  cycle        MonthlyScheduleCycle? @relation(fields: [cycleId], references: [id])
+  assignments  ServiceAssignment[]
+  repertoire   ServiceRepertoireItem[]
+
+  @@index([ministryId, date])
+  @@index([cycleId])
+}
+
+model ServiceAssignment {
+  id               String   @id @default(cuid())
+  scheduleId       String
+  ministryMemberId String?
+  role             String
+  status           String   @default("vago")
+  substitutionOf   String?
+  confirmed        Boolean  @default(false)
+  confirmedAt      DateTime?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  schedule       ServiceSchedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  ministryMember MinistryMember? @relation(fields: [ministryMemberId], references: [id])
+
+  @@index([ministryMemberId, status])
+  @@index([scheduleId, status])
+  @@index([scheduleId, role])
+}
+
+model ServiceRepertoireItem {
+  id          String   @id @default(cuid())
+  scheduleId  String
+  songId      String
+  order       Int
+  keyOverride String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  schedule ServiceSchedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  song     Song            @relation(fields: [songId], references: [id])
+
+  @@index([scheduleId])
+  @@index([songId])
+}
+
+model SessionExecutionLog {
+  id              String   @id @default(cuid())
+  sessionId       String
+  blockId         String
+  triggeredAt     DateTime @default(now())
+  wasOverride     Boolean  @default(false)
+  triggeredByUserId String
+  durationSeconds Float?
+
+  block        CueBlock   @relation(fields: [blockId], references: [id])
+  triggeredBy  User       @relation(fields: [triggeredByUserId], references: [id])
+
+  @@index([triggeredAt])
+  @@index([sessionId])
+  @@index([blockId])
+}
+
+model WhatsAppMessageLog {
+  id              String   @id @default(cuid())
+  ministryId      String
+  musicianId      String?
+  sentById        String
+  templateName    String
+  context         String   @default("{}")
+  messageId       String?
+  status          String   @default("enviado")
+  responsePayload String?
+  sentAt          DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  ministry Ministry @relation(fields: [ministryId], references: [id], onDelete: Cascade)
+  sentBy   User     @relation(fields: [sentById], references: [id])
+
+  @@index([ministryId, sentAt, status])
+  @@index([musicianId])
+}
+
+model NotificationLog {
+  id              String   @id @default(cuid())
+  ministryMemberId String?
+  ministryId      String
+  channel         String   @default("telegram")
+  templateName    String
+  context         String   @default("{}")
+  messageId       String?
+  status          String   @default("enviado")
+  responsePayload String?
+  sentAt          DateTime @default(now())
+
+  ministry       Ministry       @relation(fields: [ministryId], references: [id], onDelete: Cascade)
+  ministryMember MinistryMember? @relation(fields: [ministryMemberId], references: [id])
+
+  @@index([ministryId, sentAt, status])
+}
+
+model MonthlyScheduleCycle {
+  id                String     @id @default(cuid())
+  ministryId        String
+  month             Int
+  year              Int
+  status            String     @default("coletando_disponibilidade")
+  availabilityDeadline DateTime
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  deletedAt         DateTime?
+
+  ministry Ministry @relation(fields: [ministryId], references: [id], onDelete: Cascade)
+  schedules ServiceSchedule[]
+  availabilityResponses AvailabilityResponse[]
+
+  @@index([ministryId, status])
+}
+
+model AvailabilityResponse {
+  id               String   @id @default(cuid())
+  cycleId          String
+  ministryMemberId String
+  sundayDate       DateTime
+  available        Boolean
+  respondedAt      DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  cycle          MonthlyScheduleCycle @relation(fields: [cycleId], references: [id], onDelete: Cascade)
+  ministryMember MinistryMember       @relation(fields: [ministryMemberId], references: [id], onDelete: Cascade)
+
+  @@unique([cycleId, ministryMemberId, sundayDate])
+  @@index([ministryMemberId])
+}
+
+model MinistryConfig {
+  ministryId               String   @id
+  defaultFormation         String   @default("[]")
+  availabilityDeadlineDays Int      @default(5)
+  substitutionWindowHours  Int      @default(4)
+  cycleTriggerDay          Int      @default(20)
+
+  ministry Ministry @relation(fields: [ministryId], references: [id], onDelete: Cascade)
+}

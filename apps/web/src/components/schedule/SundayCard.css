@@ -1,0 +1,66 @@
+.sunday-card {
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.sunday-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--spacing-m);
+  border: none;
+  background: var(--bg-card-elevated);
+  cursor: pointer;
+  text-align: left;
+}
+
+.sunday-card__date {
+  font-weight: 500;
+}
+
+.sunday-card__toggle {
+  color: var(--text-tertiary);
+}
+
+.sunday-card__assignments {
+  padding: var(--spacing-s);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.sunday-card__slot {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-s);
+  padding: var(--spacing-s);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+}
+
+.sunday-card__slot--vago {
+  background: var(--status-error-bg);
+  border: 1px solid var(--status-error);
+}
+
+.sunday-card__role {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  min-width: 100px;
+}
+
+.sunday-card__musician {
+  flex: 1;
+  font-size: 0.875rem;
+}
+
+.sunday-card__swap {
+  padding: var(--spacing-xxs) var(--spacing-s);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-default);
+  background: var(--bg-primary);
+  font-size: 0.75rem;
+  cursor: pointer;
+}

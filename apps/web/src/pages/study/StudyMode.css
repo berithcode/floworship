@@ -1,0 +1,40 @@
+.study-mode {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.study-mode__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-s) var(--spacing-m);
+  border-bottom: 1px solid var(--border-default);
+}
+
+.study-mode__title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.study-mode__song-id {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+}
+
+.study-mode__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-m);
+  padding: var(--spacing-m);
+  flex: 1;
+}
+
+@media (min-width: 768px) {
+  .study-mode__content {
+    flex-direction: row;
+  }
+}

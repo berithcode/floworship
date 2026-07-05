@@ -1,0 +1,117 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg-primary: #000000;
+  --color-bg-secondary: #0a0a0a;
+  --color-bg-tertiary: #121212;
+  --color-bg-card-white: #FFFFFF;
+  --color-bg-card-gray-light: #E0E0E0;
+  --color-bg-card-gray-dark: #171717;
+  --color-bg-card-mint: #21F1A8;
+
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #E0E0E0;
+  --color-text-tertiary: #A3A3A3;
+  --color-text-on-mint: #000000;
+
+  --color-border-subtle: #262626;
+  --color-border-strong: #333333;
+
+  --color-accent-mint: #21F1A8;
+  --color-accent-mint-dim: rgba(33, 241, 168, 0.15);
+
+  --color-success: #3DDC97;
+  --color-warning: #FFB648;
+  --color-danger: #FF5C5C;
+  --color-info: #4A9EFF;
+
+  --font-sans: "Geist", "Satoshi", system-ui, sans-serif;
+  --font-display: "Geist Display", "Satoshi", system-ui, sans-serif;
+  --font-mono: "Geist Mono", "JetBrains Mono", monospace;
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* Light theme - Cards BRANCOS, sidebar PRETA, accent verde lima (#B8E844) */
+[data-theme="light"] {
+  --color-bg-primary: #F5F5F0;
+  --color-bg-secondary: #FFFFFF;
+  --color-bg-tertiary: #E8E8E3;
+  --color-bg-card-white: #FFFFFF;
+  --color-bg-card-gray-light: #F0F0EB;
+  --color-bg-card-gray-dark: #FFFFFF;
+  --color-bg-card-mint: #B8E844;
+
+  --color-text-primary: #0A0A0A;
+  --color-text-secondary: #262626;
+  --color-text-tertiary: #525252;
+  --color-text-on-mint: #0A0A0A;
+
+  --color-border-subtle: #E0E0D8;
+  --color-border-strong: #C8C8C0;
+
+  --color-accent-mint: #5BC278;
+  --color-accent-mint-dim: rgba(91, 194, 120, 0.15);
+
+  --color-success: #2E7D32;
+  --color-warning: #E65100;
+  --color-danger: #C62828;
+  --color-info: #1565C0;
+}
+
+[data-theme="light"] body {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+}
+
+@utility bg-gradient-135 {
+  background-image: linear-gradient(135deg, var(--tw-gradient-stops));
+}
+
+@utility scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@utility spinner-gradient {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  border-width: 2px;
+  border-style: solid;
+  border-color: transparent;
+  border-top-color: var(--color-accent-mint);
+  border-right-color: var(--color-accent-mint);
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+body {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .backdrop-blur-md, .backdrop-blur-xl {
+    background-color: rgba(26, 26, 26, 0.95);
+  }
+}

@@ -1,0 +1,56 @@
+.metronome-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-s);
+  padding: var(--spacing-l);
+  background: var(--bg-card-elevated);
+  border-radius: var(--radius-lg);
+}
+
+.metronome-placeholder__title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.metronome-placeholder__bpm {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.metronome-placeholder__slider {
+  width: 100%;
+  max-width: 240px;
+}
+
+.metronome-placeholder__range {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 240px;
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+}
+
+.metronome-placeholder__play {
+  padding: var(--spacing-s) var(--spacing-l);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-default);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.metronome-placeholder__play--active {
+  background: var(--accent-primary);
+  color: var(--text-on-accent);
+  border-color: var(--accent-primary);
+}
+
+.metronome-placeholder__message {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  font-style: italic;
+}

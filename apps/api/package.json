@@ -1,0 +1,38 @@
+{
+  "name": "@floworship/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "db:migrate": "prisma migrate dev",
+    "db:generate": "prisma generate",
+    "db:seed": "tsx prisma/seed.ts",
+    "test": "vitest run",
+    "lint": "eslint src/"
+  },
+  "dependencies": {
+    "@fastify/cookie": "^11.0.2",
+    "@fastify/cors": "^11.2.0",
+    "@fastify/jwt": "^10.1.0",
+    "@fastify/rate-limit": "^11.1.0",
+    "@floworship/types": "*",
+    "@open-wa/wa-automate": "^4.76.0",
+    "@prisma/client": "^6.19.3",
+    "argon2": "^0.44.0",
+    "dotenv": "^17.4.2",
+    "fastify": "^5.9.0",
+    "ws": "^8.16.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.0",
+    "@types/ws": "^8.5.10",
+    "prisma": "^6.19.3",
+    "tsx": "^4.22.4",
+    "typescript": "^5.2.2",
+    "vitest": "^3.1.0"
+  }
+}

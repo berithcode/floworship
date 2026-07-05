@@ -4,6 +4,7 @@ import { useAuth } from './context/AuthContext';
 import { LoginPage } from './pages/auth/LoginPage';
 import { MinistrySelector } from './pages/dashboard/MinistrySelector';
 import { Dashboard } from './pages/dashboard/Dashboard';
+import { DashboardNew } from './pages/dashboard/DashboardNew';
 import { SongList } from './pages/library/SongList';
 import { SongDetail } from './pages/library/SongDetail';
 import { NewSong } from './pages/library/NewSong';
@@ -14,6 +15,7 @@ import { ModoTV } from './pages/performance/ModoTV';
 import { SessionEnd } from './pages/performance/SessionEnd';
 import { StudyMode } from './pages/study/StudyMode';
 import { ScheduleDashboard } from './pages/admin/ScheduleDashboard';
+import { MobileHome } from './pages/mobile/MobileHome';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -78,7 +80,23 @@ function AppRoutes() {
         path="/dashboard"
         element={
           <ProtectedRoute>
+            <DashboardNew />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard-old"
+        element={
+          <ProtectedRoute>
             <Dashboard userName={user?.name || ''} />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/mobile"
+        element={
+          <ProtectedRoute>
+            <MobileHome />
           </ProtectedRoute>
         }
       />

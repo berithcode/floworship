@@ -1,0 +1,52 @@
+.override-confirm__overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.override-confirm__dialog {
+  background: var(--bg-card-elevated);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-l);
+  min-width: 280px;
+  box-shadow: var(--shadow-lg);
+}
+
+.override-confirm__title {
+  margin: 0 0 var(--spacing-s);
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.override-confirm__message {
+  margin: 0 0 var(--spacing-l);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.override-confirm__actions {
+  display: flex;
+  gap: var(--spacing-s);
+  justify-content: flex-end;
+}
+
+.override-confirm__btn {
+  padding: var(--spacing-s) var(--spacing-m);
+  border-radius: var(--radius-full);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid var(--border-default);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.override-confirm__btn--confirm {
+  background: var(--accent-primary);
+  color: var(--text-on-accent);
+  border-color: var(--accent-primary);
+}
