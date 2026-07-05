@@ -44,7 +44,7 @@ export async function profileRoutes(fastify: FastifyInstance) {
       })),
       musician: member ? {
         instrument: member.instrument,
-        worshipRoles: JSON.parse(member.worshipRoles || '[]'),
+        worshipRoles: member.worshipRoles,
       } : null,
     };
   });

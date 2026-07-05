@@ -55,7 +55,7 @@ export async function findSubstitute(assignmentId: string) {
       userId: c.userId,
       timesServedThisMonth: c.assignments.length,
       lastServedAt: map,
-      worshipRoles: JSON.parse(c.worshipRoles || '[]'),
+      worshipRoles: (c.worshipRoles as string[]) || [],
     };
   });
 

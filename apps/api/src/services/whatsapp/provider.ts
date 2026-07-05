@@ -1,5 +1,4 @@
 import { WhatsappService } from './types';
-import { OpenWAService } from './implementations/openwa';
 
 const WHATSAPP_PROVIDER = process.env.WHATSAPP_PROVIDER || 'openwa';
 
@@ -10,8 +9,8 @@ export function initWhatsappService(): void {
     console.log('[WhatsApp] Provider: Meta Cloud API (não implementada)');
     whatsappService = createMetaStub();
   } else {
-    console.log('[WhatsApp] Provider: OpenWA');
-    whatsappService = new OpenWAService();
+    console.log('[WhatsApp] Provider: OpenWA (desativado)');
+    whatsappService = createDisabledStub();
   }
 }
 
@@ -19,6 +18,16 @@ function createMetaStub(): WhatsappService {
   return {
     sendTemplate: async () => ({ status: 'failed', error: 'Meta Cloud API não configurada' }),
     sendText: async () => ({ status: 'failed', error: 'Meta Cloud API não configurada' }),
+    onReply: () => {},
+    dispatchReply: () => {},
+    status: async () => ({ status: 'disconnected' }),
+  };
+}
+
+function createDisabledStub(): WhatsappService {
+  return {
+    sendTemplate: async () => ({ status: 'failed', error: 'WhatsApp desativado' }),
+    sendText: async () => ({ status: 'failed', error: 'WhatsApp desativado' }),
     onReply: () => {},
     dispatchReply: () => {},
     status: async () => ({ status: 'disconnected' }),

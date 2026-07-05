@@ -43,7 +43,8 @@ async function build() {
       const allowed = [
         'http://localhost:5173',
         'http://192.168.3.11:5173',
-      ];
+        process.env.APP_URL,
+      ].filter(Boolean);
       if (!origin || allowed.includes(origin)) {
         cb(null, true);
       } else {

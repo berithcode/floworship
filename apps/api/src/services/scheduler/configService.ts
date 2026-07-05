@@ -20,7 +20,7 @@ export async function getConfig(ministryId: string): Promise<MinistryConfig> {
   if (existing) {
     return {
       ministryId: existing.ministryId,
-      defaultFormation: JSON.parse(existing.defaultFormation || '[]'),
+      defaultFormation: existing.defaultFormation as string[],
       availabilityDeadlineDays: existing.availabilityDeadlineDays,
       substitutionWindowHours: existing.substitutionWindowHours,
       cycleTriggerDay: existing.cycleTriggerDay,
@@ -31,7 +31,7 @@ export async function getConfig(ministryId: string): Promise<MinistryConfig> {
 
 export async function updateConfig(ministryId: string, partial: Partial<MinistryConfig>) {
   const data: Record<string, any> = {};
-  if (partial.defaultFormation) data.defaultFormation = JSON.stringify(partial.defaultFormation);
+  if (partial.defaultFormation) data.defaultFormation = partial.defaultFormation;
   if (partial.availabilityDeadlineDays) data.availabilityDeadlineDays = partial.availabilityDeadlineDays;
   if (partial.substitutionWindowHours) data.substitutionWindowHours = partial.substitutionWindowHours;
   if (partial.cycleTriggerDay) data.cycleTriggerDay = partial.cycleTriggerDay;

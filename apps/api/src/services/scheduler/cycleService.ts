@@ -194,7 +194,7 @@ async function getFormation(ministryId: string): Promise<string[]> {
 
   if (config?.defaultFormation) {
     try {
-      const formation = JSON.parse(config.defaultFormation);
+      const formation = config.defaultFormation as string[];
       if (Array.isArray(formation) && formation.length > 0) {
         return formation;
       }
@@ -266,7 +266,7 @@ async function generateScheduleForCycle(cycleId: string) {
     userId: m.userId,
     timesServedThisMonth: countMap.get(m.id) || 0,
     lastServedAt: lastServedMap.get(m.id) || {} as Record<string, Date>,
-    worshipRoles: JSON.parse(m.worshipRoles || '[]'),
+    worshipRoles: (m.worshipRoles as string[]) || [],
   }));
 
   console.log(`[Scheduler] Candidatos:`, candidates.map(c => `${c.worshipRoles.join(',')}`).join(' | '));

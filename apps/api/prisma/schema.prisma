@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -46,7 +46,7 @@ model User {
 
   ministryMembers MinistryMember[]
   refreshTokens   RefreshToken[]
-  userSessions  UserSession[]
+  userSessions    UserSession[]
   sentInvites     Invite[]  @relation("invitedBy")
   passwordResets  PasswordResetToken[]
   createdSongs    Song[]
@@ -61,14 +61,14 @@ model Ministry {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  members   MinistryMember[]
-  invites   Invite[]
-  songs     Song[]
-  schedules ServiceSchedule[]
+  members          MinistryMember[]
+  invites          Invite[]
+  songs            Song[]
+  schedules        ServiceSchedule[]
   notificationLogs NotificationLog[]
-  whatsappLogs WhatsAppMessageLog[]
-  cycles    MonthlyScheduleCycle[]
-  config    MinistryConfig?
+  whatsappLogs     WhatsAppMessageLog[]
+  cycles           MonthlyScheduleCycle[]
+  config           MinistryConfig?
 }
 
 model MinistryMember {
@@ -76,11 +76,11 @@ model MinistryMember {
   userId              String
   ministryId          String
   role                String   @default("musician")
-  worshipRoles        String   @default("[]")
+  worshipRoles        Json     @default("[]")
   instrument          String?
   isActiveInSchedule  Boolean  @default(true)
   timesServedThisMonth Int     @default(0)
-  lastServedAt        String   @default("{}")
+  lastServedAt        Json     @default("{}")
   telegramChatId      String?
   telegramUsername    String?
   telegramLinkToken   String?
@@ -89,11 +89,11 @@ model MinistryMember {
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 
-  user         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
-  ministry     Ministry            @relation(fields: [ministryId], references: [id], onDelete: Cascade)
-  assignments  ServiceAssignment[]
-  notificationLogs NotificationLog[]
-  availabilityResponses AvailabilityResponse[]
+  user                   User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ministry               Ministry            @relation(fields: [ministryId], references: [id], onDelete: Cascade)
+  assignments            ServiceAssignment[]
+  notificationLogs       NotificationLog[]
+  availabilityResponses  AvailabilityResponse[]
 
   @@unique([userId, ministryId])
   @@index([ministryId, role])
@@ -115,12 +115,12 @@ model RefreshToken {
 }
 
 model UserSession {
-  id        String   @id @default(cuid())
-  userId    String
-  userAgent String?
-  ip        String?
+  id           String   @id @default(cuid())
+  userId       String
+  userAgent    String?
+  ip           String?
   lastActiveAt DateTime @default(now())
-  createdAt DateTime @default(now())
+  createdAt    DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -128,22 +128,22 @@ model UserSession {
 }
 
 model Invite {
-  id         String   @id @default(cuid())
-  token      String   @unique
-  email      String?
-  phone      String?
-  name       String
-  ministryId String
-  role       String   @default("musician")
-  expiresAt  DateTime
-  usedAt     DateTime?
+  id           String   @id @default(cuid())
+  token        String   @unique
+  email        String?
+  phone        String?
+  name         String
+  ministryId   String
+  role         String   @default("musician")
+  expiresAt    DateTime
+  usedAt       DateTime?
   usedByUserId String?
   invitedById  String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  ministry Ministry @relation(fields: [ministryId], references: [id], onDelete: Cascade)
-  invitedBy User @relation("invitedBy", fields: [invitedById], references: [id])
+  ministry  Ministry @relation(fields: [ministryId], references: [id], onDelete: Cascade)
+  invitedBy User     @relation("invitedBy", fields: [invitedById], references: [id])
 
   @@index([phone])
   @@index([ministryId, usedAt])
@@ -164,49 +164,49 @@ model PasswordResetToken {
 }
 
 model Song {
-  id        String   @id @default(cuid())
-  title     String
-  artist    String?
+  id         String   @id @default(cuid())
+  title      String
+  artist     String?
   defaultKey String?
-  tags      String   @default("[]")
-  status    String   @default("rascunho")
-  notes     String?
+  tags       Json     @default("[]")
+  status     String   @default("rascunho")
+  notes      String?
   ministryId String
   createdById String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  ministry     Ministry @relation(fields: [ministryId], references: [id], onDelete: Cascade)
-  createdBy    User     @relation(fields: [createdById], references: [id])
-  cueSheet     SongCueSheet?
-  repertoireItems ServiceRepertoireItem[]
+  ministry         Ministry @relation(fields: [ministryId], references: [id], onDelete: Cascade)
+  createdBy        User     @relation(fields: [createdById], references: [id])
+  cueSheet         SongCueSheet?
+  repertoireItems  ServiceRepertoireItem[]
 
   @@index([ministryId, status])
 }
 
 model SongCueSheet {
-  id                 String   @id @default(cuid())
-  songId             String   @unique
-  referenceTrackUrl  String?
+  id                  String   @id @default(cuid())
+  songId              String   @unique
+  referenceTrackUrl   String?
   totalDurationSeconds Float?
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 
   song   Song      @relation(fields: [songId], references: [id], onDelete: Cascade)
   blocks CueBlock[]
 }
 
 model CueBlock {
-  id          String   @id @default(cuid())
-  cueSheetId  String
-  label       String
-  startTime   Float
-  endTime     Float
-  duration    Float
-  chordproContent String?
-  order       Int
+  id               String   @id @default(cuid())
+  cueSheetId       String
+  label            String
+  startTime        Float
+  endTime          Float
+  duration         Float
+  chordproContent  String?
+  order            Int
 
-  cueSheet SongCueSheet @relation(fields: [cueSheetId], references: [id], onDelete: Cascade)
+  cueSheet    SongCueSheet         @relation(fields: [cueSheetId], references: [id], onDelete: Cascade)
   sessionLogs SessionExecutionLog[]
 
   @@index([cueSheetId])
@@ -270,16 +270,16 @@ model ServiceRepertoireItem {
 }
 
 model SessionExecutionLog {
-  id              String   @id @default(cuid())
-  sessionId       String
-  blockId         String
-  triggeredAt     DateTime @default(now())
-  wasOverride     Boolean  @default(false)
+  id                String   @id @default(cuid())
+  sessionId         String
+  blockId           String
+  triggeredAt       DateTime @default(now())
+  wasOverride       Boolean  @default(false)
   triggeredByUserId String
-  durationSeconds Float?
+  durationSeconds   Float?
 
-  block        CueBlock   @relation(fields: [blockId], references: [id])
-  triggeredBy  User       @relation(fields: [triggeredByUserId], references: [id])
+  block       CueBlock @relation(fields: [blockId], references: [id])
+  triggeredBy User     @relation(fields: [triggeredByUserId], references: [id])
 
   @@index([triggeredAt])
   @@index([sessionId])
@@ -292,7 +292,7 @@ model WhatsAppMessageLog {
   musicianId      String?
   sentById        String
   templateName    String
-  context         String   @default("{}")
+  context         Json     @default("{}")
   messageId       String?
   status          String   @default("enviado")
   responsePayload String?
@@ -307,16 +307,16 @@ model WhatsAppMessageLog {
 }
 
 model NotificationLog {
-  id              String   @id @default(cuid())
+  id               String   @id @default(cuid())
   ministryMemberId String?
-  ministryId      String
-  channel         String   @default("telegram")
-  templateName    String
-  context         String   @default("{}")
-  messageId       String?
-  status          String   @default("enviado")
-  responsePayload String?
-  sentAt          DateTime @default(now())
+  ministryId       String
+  channel          String   @default("telegram")
+  templateName     String
+  context          Json     @default("{}")
+  messageId        String?
+  status           String   @default("enviado")
+  responsePayload  String?
+  sentAt           DateTime @default(now())
 
   ministry       Ministry       @relation(fields: [ministryId], references: [id], onDelete: Cascade)
   ministryMember MinistryMember? @relation(fields: [ministryMemberId], references: [id])
@@ -325,18 +325,18 @@ model NotificationLog {
 }
 
 model MonthlyScheduleCycle {
-  id                String     @id @default(cuid())
-  ministryId        String
-  month             Int
-  year              Int
-  status            String     @default("coletando_disponibilidade")
-  availabilityDeadline DateTime
-  createdAt         DateTime   @default(now())
-  updatedAt         DateTime   @updatedAt
-  deletedAt         DateTime?
+  id                    String   @id @default(cuid())
+  ministryId            String
+  month                 Int
+  year                  Int
+  status                String   @default("coletando_disponibilidade")
+  availabilityDeadline  DateTime
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  deletedAt             DateTime?
 
-  ministry Ministry @relation(fields: [ministryId], references: [id], onDelete: Cascade)
-  schedules ServiceSchedule[]
+  ministry              Ministry @relation(fields: [ministryId], references: [id], onDelete: Cascade)
+  schedules             ServiceSchedule[]
   availabilityResponses AvailabilityResponse[]
 
   @@index([ministryId, status])
@@ -360,7 +360,7 @@ model AvailabilityResponse {
 
 model MinistryConfig {
   ministryId               String   @id
-  defaultFormation         String   @default("[]")
+  defaultFormation         Json     @default("[]")
   availabilityDeadlineDays Int      @default(5)
   substitutionWindowHours  Int      @default(4)
   cycleTriggerDay          Int      @default(20)

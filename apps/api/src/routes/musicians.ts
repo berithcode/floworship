@@ -57,7 +57,7 @@ export async function musicianRoutes(fastify: FastifyInstance) {
       name: member.user?.name || 'Unknown',
       email: member.user?.email || '',
       instrument: member.instrument || '',
-      worshipRoles: JSON.parse(member.worshipRoles || '[]'),
+      worshipRoles: member.worshipRoles,
       telegramLinked: !!member.telegramChatId,
       telegramUsername: member.telegramUsername,
       isActiveInSchedule: member.isActiveInSchedule,
@@ -132,7 +132,7 @@ export async function musicianRoutes(fastify: FastifyInstance) {
     return {
       id: updated.id,
       instrument: updated.instrument,
-      worshipRoles: JSON.parse(updated.worshipRoles || '[]'),
+      worshipRoles: updated.worshipRoles,
       isActiveInSchedule: updated.isActiveInSchedule,
     };
   });
