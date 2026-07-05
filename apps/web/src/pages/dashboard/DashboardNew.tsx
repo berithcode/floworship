@@ -36,7 +36,7 @@ export function DashboardNew() {
 
   const handleCycleAction = useCallback(() => {
     const status = metrics?.cycleStatus;
-    const cycleId = metrics?.cycleId;
+    const _cycleId = metrics?.cycleId;
 
     if (status === 'nenhum') {
       executeAction('create', undefined, ministryId);

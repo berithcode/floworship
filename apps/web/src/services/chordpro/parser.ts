@@ -1,4 +1,4 @@
-import { ChordsOverWordsParser, ChordProParser } from 'chordsheetjs';
+import { ChordsOverWordsParser } from 'chordsheetjs';
 
 export interface ChordEvent {
   chord: string;
