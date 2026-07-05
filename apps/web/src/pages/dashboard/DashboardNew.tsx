@@ -36,7 +36,6 @@ export function DashboardNew() {
 
   const handleCycleAction = useCallback(() => {
     const status = metrics?.cycleStatus;
-    const _cycleId = metrics?.cycleId;
 
     if (status === 'nenhum') {
       executeAction('create', undefined, ministryId);
@@ -49,7 +48,7 @@ export function DashboardNew() {
     } else if (status === 'gerando') {
       return;
     }
-  }, [metrics?.cycleStatus, metrics?.cycleId, executeAction, navigate, ministryId]);
+  }, [metrics?.cycleStatus, executeAction, navigate, ministryId]);
 
   if (loading) {
     return (
