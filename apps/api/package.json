@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsup src/index.ts --format esm --outDir dist --clean --external @prisma/client",
+    "build": "npx prisma generate && tsup src/index.ts --format esm --outDir dist --clean --external @prisma/client",
     "start": "node dist/index.js",
     "db:migrate": "prisma migrate dev",
     "db:generate": "prisma generate",
