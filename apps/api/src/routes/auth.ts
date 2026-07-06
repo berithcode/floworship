@@ -611,11 +611,18 @@ export async function authRoutes(fastify: FastifyInstance) {
         },
       });
 
+      // Bootstrap: primeiro usuário do ministério vira admin automaticamente
+      const memberCount = await prisma.ministryMember.count({
+        where: { ministryId: invite.ministryId },
+      });
+
+      const finalRole = memberCount === 0 ? 'admin' : invite.role;
+
       await prisma.ministryMember.create({
         data: {
           userId: user.id,
           ministryId: invite.ministryId,
-          role: invite.role,
+          role: finalRole,
         },
       });
 

@@ -14,8 +14,10 @@ import { telegramWebhookRoutes } from './routes/telegram-webhook';
 import { musicianRoutes } from './routes/musicians';
 import { profileRoutes } from './routes/profile';
 import { sessionRoutes } from './routes/sessions';
+import { sessionStateRoutes } from './routes/sessions/state';
 import { prisma } from './db';
 import { SessionWSServer } from './websocket/server';
+import { setWSServer } from './ws-broadcaster';
 
 const PORT = Number(process.env.PORT) || 4001;
 
@@ -66,6 +68,7 @@ async function build() {
   await fastify.register(musicianRoutes, { prefix: '/api' });
   await fastify.register(profileRoutes, { prefix: '/api' });
   await fastify.register(sessionRoutes, { prefix: '/api' });
+  await fastify.register(sessionStateRoutes, { prefix: '/api' });
   await fastify.register(dashboardRoutes, { prefix: '/api' });
 
   return fastify;
@@ -82,6 +85,7 @@ async function start() {
     const httpServer = (app as any).server;
     if (httpServer) {
       const ws = new SessionWSServer(httpServer);
+      setWSServer(ws);
       console.log('WebSocket server initialized on ws://localhost:' + PORT + '/ws');
     }
   } catch (err) {

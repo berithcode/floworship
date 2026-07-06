@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -52,7 +52,8 @@ model User {
   createdSongs    Song[]
   sessionLogs     SessionExecutionLog[]
   whatsappLogs    WhatsAppMessageLog[]
-  createdSchedules ServiceSchedule[]
+  createdSchedules ServiceSchedule[] @relation("ScheduleCreator")
+  operatedSessions ServiceSchedule[] @relation("SessionOperator")
 }
 
 model Ministry {
@@ -224,7 +225,9 @@ model ServiceSchedule {
   deletedAt   DateTime?
 
   ministry     Ministry              @relation(fields: [ministryId], references: [id], onDelete: Cascade)
-  createdBy    User                  @relation(fields: [createdById], references: [id])
+  createdBy    User                  @relation("ScheduleCreator", fields: [createdById], references: [id])
+  operator     User?                 @relation("SessionOperator", fields: [operatorId], references: [id])
+  operatorId   String?
   cycle        MonthlyScheduleCycle? @relation(fields: [cycleId], references: [id])
   assignments  ServiceAssignment[]
   repertoire   ServiceRepertoireItem[]

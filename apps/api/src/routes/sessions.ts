@@ -24,6 +24,7 @@ export async function sessionRoutes(fastify: FastifyInstance) {
         date: new Date(),
         sessionType: type,
         createdById: user.id,
+        operatorId: user.id,
       },
     });
 
@@ -108,6 +109,7 @@ export async function sessionRoutes(fastify: FastifyInstance) {
         date: new Date(),
         sessionType: 'ensaio',
         createdById: user.id,
+        operatorId: user.id,
         repertoire: {
           create: schedule.repertoire.map(r => ({
             songId: r.songId,

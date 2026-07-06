@@ -1,10 +1,14 @@
 import type { FastifyInstance } from 'fastify';
 import { prisma } from '../../db';
 import { authMiddleware } from '../../middleware/auth';
+import { getWSServer } from '../../ws-broadcaster';
+import type { TransitionEvent } from '@floworship/types';
 
 export async function sessionStateRoutes(app: FastifyInstance) {
+
   app.get('/sessions/:id/state', { preHandler: [authMiddleware] }, async (request, reply) => {
     const { id } = request.params as { id: string };
+    const user = (request as any).user;
 
     const session = await prisma.serviceSchedule.findUnique({
       where: { id },
@@ -15,9 +19,7 @@ export async function sessionStateRoutes(app: FastifyInstance) {
               include: {
                 cueSheet: {
                   include: {
-                    blocks: {
-                      orderBy: { order: 'asc' },
-                    },
+                    blocks: { orderBy: { order: 'asc' } },
                   },
                 },
               },
@@ -34,11 +36,17 @@ export async function sessionStateRoutes(app: FastifyInstance) {
             },
           },
         },
+        operator: { select: { id: true, name: true } },
+        createdBy: { select: { id: true, name: true } },
       },
     });
 
     if (!session) {
       return reply.status(404).send({ error: 'Session not found' });
+    }
+
+    if (session.ministryId !== user.ministryId) {
+      return reply.status(403).send({ error: 'Forbidden' });
     }
 
     const allBlocks: any[] = [];
@@ -82,6 +90,12 @@ export async function sessionStateRoutes(app: FastifyInstance) {
         artist: r.song.artist,
         key: r.keyOverride || r.song.defaultKey,
       })),
+      operatorId: session.operatorId,
+      operatorName: session.operator?.name || null,
+      createdById: session.createdById,
+      createdByName: session.createdBy.name,
+      isOperator: user.id === session.operatorId,
+      isCreator: user.id === session.createdById,
     };
   });
 
@@ -98,9 +112,7 @@ export async function sessionStateRoutes(app: FastifyInstance) {
             song: {
               include: {
                 cueSheet: {
-                  include: {
-                    blocks: true,
-                  },
+                  include: { blocks: true },
                 },
               },
             },
@@ -111,6 +123,14 @@ export async function sessionStateRoutes(app: FastifyInstance) {
 
     if (!session) {
       return reply.status(404).send({ error: 'Session not found' });
+    }
+
+    if (session.ministryId !== user.ministryId) {
+      return reply.status(403).send({ error: 'Forbidden' });
+    }
+
+    if (session.operatorId !== user.id) {
+      return reply.status(403).send({ error: 'Only the operator can trigger blocks' });
     }
 
     const allBlocks: any[] = [];
@@ -144,7 +164,104 @@ export async function sessionStateRoutes(app: FastifyInstance) {
       },
     });
 
-    // TODO: WebSocket broadcast
-    return { success: true, blockId, sequence: Date.now() };
+    const event: TransitionEvent = {
+      blockId,
+      sessionId: id,
+      triggeredAt: new Date().toISOString(),
+      wasOverride: true,
+      sequence: Date.now(),
+      triggeredByUserId: user.id,
+    };
+
+    const ws = getWSServer();
+    if (ws) {
+      ws.broadcast(id, session.ministryId, event);
+    }
+
+    return { success: true, blockId, sequence: event.sequence };
+  });
+
+  app.post('/sessions/:id/transfer-operator', { preHandler: [authMiddleware] }, async (request, reply) => {
+    const { id } = request.params as { id: string };
+    const user = (request as any).user;
+    const { newOperatorId } = request.body as { newOperatorId: string };
+
+    const session = await prisma.serviceSchedule.findUnique({
+      where: { id },
+      include: {
+        operator: { select: { id: true, name: true } },
+        createdBy: { select: { id: true, name: true } },
+      },
+    });
+
+    if (!session) {
+      return reply.status(404).send({ error: 'Session not found' });
+    }
+
+    if (session.ministryId !== user.ministryId) {
+      return reply.status(403).send({ error: 'Forbidden' });
+    }
+
+    if (session.createdById !== user.id) {
+      return reply.status(403).send({ error: 'Only the session creator can transfer the operator' });
+    }
+
+    const newOperator = await prisma.user.findUnique({
+      where: { id: newOperatorId },
+      select: { id: true, name: true },
+    });
+
+    if (!newOperator) {
+      return reply.status(404).send({ error: 'User not found' });
+    }
+
+    await prisma.serviceSchedule.update({
+      where: { id },
+      data: { operatorId: newOperatorId },
+    });
+
+    const ws = getWSServer();
+    if (ws) {
+      ws.broadcastOperatorChanged(id, session.ministryId, newOperatorId, newOperator.name);
+    }
+
+    return { success: true, operatorId: newOperatorId, operatorName: newOperator.name };
+  });
+
+  app.post('/sessions/:id/return-operator-to-creator', { preHandler: [authMiddleware] }, async (request, reply) => {
+    const { id } = request.params as { id: string };
+    const user = (request as any).user;
+
+    const session = await prisma.serviceSchedule.findUnique({
+      where: { id },
+      include: {
+        operator: { select: { id: true, name: true } },
+        createdBy: { select: { id: true, name: true } },
+      },
+    });
+
+    if (!session) {
+      return reply.status(404).send({ error: 'Session not found' });
+    }
+
+    if (session.ministryId !== user.ministryId) {
+      return reply.status(403).send({ error: 'Forbidden' });
+    }
+
+    if (session.operatorId !== user.id) {
+      return reply.status(403).send({ error: 'Only the current operator can return operator to creator' });
+    }
+
+    await prisma.serviceSchedule.update({
+      where: { id },
+      data: { operatorId: session.createdById },
+    });
+
+    const ws = getWSServer();
+    if (ws) {
+      ws.broadcastOperatorChanged(id, session.ministryId, session.createdById, session.createdBy.name);
+    }
+
+    return { success: true, operatorId: session.createdById, operatorName: session.createdBy.name };
   });
 }

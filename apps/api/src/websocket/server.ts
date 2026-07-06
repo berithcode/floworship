@@ -63,21 +63,17 @@ export class SessionWSServer {
       const cookies = parseCookies(cookieHeader);
       const token = cookies.access_token;
 
-      if (!token) {
-        ws.close(4001, 'Authentication required');
-        return;
+      if (token) {
+        const payload = verifyJwt(token);
+        if (payload) {
+          (ws as AuthenticatedWebSocket).data = {
+            userId: payload.userId,
+            ministryId: payload.ministryId,
+          };
+        }
       }
 
-      const payload = verifyJwt(token);
-      if (!payload) {
-        ws.close(4001, 'Invalid or expired token');
-        return;
-      }
-
-      (ws as AuthenticatedWebSocket).data = {
-        userId: payload.userId,
-        ministryId: payload.ministryId,
-      };
+      // Even without auth, connection stays open for health check
 
       ws.on('message', (data) => {
         try {
@@ -122,6 +118,25 @@ export class SessionWSServer {
     if (!room) return;
 
     const payload = JSON.stringify({ type: 'block_changed', ...event });
+    for (const client of room.clients) {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(payload);
+      }
+    }
+  }
+
+  broadcastOperatorChanged(sessionId: string, ministryId: string, operatorId: string, operatorName: string): void {
+    const roomId = `ministry:${ministryId}:session:${sessionId}`;
+    const room = this.rooms.get(roomId);
+    if (!room) return;
+
+    const payload = JSON.stringify({
+      type: 'operator_changed',
+      sessionId,
+      operatorId,
+      operatorName,
+      timestamp: new Date().toISOString(),
+    });
     for (const client of room.clients) {
       if (client.readyState === WebSocket.OPEN) {
         client.send(payload);

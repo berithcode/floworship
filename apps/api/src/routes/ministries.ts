@@ -135,6 +135,52 @@ export async function ministriesRoutes(fastify: FastifyInstance) {
     }
   );
 
+  // Update member role (admin only)
+  fastify.put<{ Params: { id: string; memberId: string }; Body: { role: string } }>(
+    '/ministries/:id/members/:memberId/role',
+    async (request: any, reply: any) => {
+      const user = getUser(request);
+      if (!user || user.role !== 'admin') {
+        return reply.status(403).send({ error: 'Forbidden' });
+      }
+
+      const { role } = request.body;
+      const validRoles = ['admin', 'leader', 'musician', 'operator'];
+      
+      if (!validRoles.includes(role)) {
+        return reply.status(400).send({ error: 'Invalid role' });
+      }
+
+      const member = await prisma.ministryMember.findUnique({
+        where: { id: request.params.memberId },
+      });
+
+      if (!member || member.ministryId !== request.params.id) {
+        return reply.status(404).send({ error: 'Member not found' });
+      }
+
+      // Prevent demoting the only admin
+      if (member.role === 'admin') {
+        const adminCount = await prisma.ministryMember.count({
+          where: { ministryId: request.params.id, role: 'admin' },
+        });
+        
+        if (adminCount === 1 && role !== 'admin') {
+          return reply.status(400).send({ 
+            error: 'Cannot demote the only admin. Promote another user first.' 
+          });
+        }
+      }
+
+      const updated = await prisma.ministryMember.update({
+        where: { id: member.id },
+        data: { role },
+      });
+
+      return updated;
+    }
+  );
+
   // Remove member (admin only)
   fastify.delete<{ Params: { id: string; memberId: string } }>(
     '/ministries/:id/members/:memberId',
@@ -150,6 +196,19 @@ export async function ministriesRoutes(fastify: FastifyInstance) {
 
       if (!member || member.ministryId !== request.params.id) {
         return reply.status(404).send({ error: 'Member not found' });
+      }
+
+      // Prevent deleting the only admin
+      if (member.role === 'admin') {
+        const adminCount = await prisma.ministryMember.count({
+          where: { ministryId: request.params.id, role: 'admin' },
+        });
+        
+        if (adminCount === 1) {
+          return reply.status(400).send({ 
+            error: 'Cannot delete the only admin.' 
+          });
+        }
       }
 
       // Clean up related records before deleting
