@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import type { Block } from '@floworship/types';
+import { toast } from 'sonner';
 
 interface SessionSnapshot {
   currentBlockId: string | null;
@@ -7,6 +8,10 @@ interface SessionSnapshot {
   sequence: number;
   programadoPointer: number;
   overrideStack: { blockId: string; triggeredByUserId: string; triggeredAt: string }[];
+  operatorId: string | null;
+  operatorName: string | null;
+  isOperator: boolean;
+  isCreator: boolean;
 }
 
 interface SessionSocketState {
@@ -15,6 +20,10 @@ interface SessionSocketState {
   sequence: number;
   isOverrideActive: boolean;
   isConnected: boolean;
+  operatorId: string | null;
+  operatorName: string | null;
+  isOperator: boolean;
+  isCreator: boolean;
 }
 
 export function useSessionSocket(sessionId: string, ministryId: string): SessionSocketState & {
@@ -26,6 +35,10 @@ export function useSessionSocket(sessionId: string, ministryId: string): Session
     sequence: 0,
     isOverrideActive: false,
     isConnected: false,
+    operatorId: null,
+    operatorName: null,
+    isOperator: false,
+    isCreator: false,
   });
 
   const wsRef = useRef<WebSocket | null>(null);
@@ -34,7 +47,10 @@ export function useSessionSocket(sessionId: string, ministryId: string): Session
 
   const connect = useCallback(() => {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const ws = new WebSocket(`${protocol}//${window.location.host}/ws`);
+    const apiBaseUrl = import.meta.env.VITE_API_URL || '/api';
+    const baseUrl = apiBaseUrl.replace('/api', '');
+    const wsUrl = baseUrl ? `${protocol}//${baseUrl.replace('http:', '').replace('https:', '')}/ws` : `${protocol}//${window.location.host}/ws`;
+    const ws = new WebSocket(wsUrl);
     wsRef.current = ws;
 
     ws.onopen = () => {
@@ -56,6 +72,15 @@ export function useSessionSocket(sessionId: string, ministryId: string): Session
               isOverrideActive: data.wasOverride,
             };
           });
+        } else if (data.type === 'operator_changed') {
+          setState((prev) => ({
+            ...prev,
+            operatorId: data.operatorId,
+            operatorName: data.operatorName,
+            isOperator: data.operatorId === prev.operatorId
+              ? prev.isOperator
+              : prev.isOperator,
+          }));
         }
       } catch {
         // ignore
@@ -74,7 +99,8 @@ export function useSessionSocket(sessionId: string, ministryId: string): Session
   useEffect(() => {
     const fetchSnapshot = async () => {
       try {
-        const res = await fetch(`/sessions/${sessionId}/state`, { credentials: 'include' });
+        const apiUrl = import.meta.env.VITE_API_URL || '/api';
+        const res = await fetch(`${apiUrl}/sessions/${sessionId}/state`, { credentials: 'include' });
         if (res.ok) {
           const snapshot: SessionSnapshot = await res.json();
           const block = snapshot.blocks.find((b) => b.id === snapshot.currentBlockId);
@@ -84,6 +110,10 @@ export function useSessionSocket(sessionId: string, ministryId: string): Session
             sequence: snapshot.sequence,
             isOverrideActive: snapshot.overrideStack.length > 0,
             isConnected: false,
+            operatorId: snapshot.operatorId,
+            operatorName: snapshot.operatorName,
+            isOperator: snapshot.isOperator,
+            isCreator: snapshot.isCreator,
           });
         }
       } catch {
@@ -104,17 +134,26 @@ export function useSessionSocket(sessionId: string, ministryId: string): Session
 
   const triggerBlock = useCallback(async (blockId: string) => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:4001/api'}/sessions/${sessionId}/trigger-block`, {
+      const apiUrl = import.meta.env.VITE_API_URL || '/api';
+      const res = await fetch(`${apiUrl}/sessions/${sessionId}/trigger-block`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({ blockId }),
       });
       if (!res.ok) {
-        throw new Error('Failed to trigger block');
+        if (res.status === 403) {
+          toast.error('Apenas o operador pode acionar blocos');
+        } else {
+          toast.error('Erro ao acionar bloco');
+        }
+        return;
       }
-    } catch {
-      // ignore
+      const result = await res.json();
+      return result;
+    } catch (error) {
+      console.error('Failed to trigger block:', error);
+      toast.error('Erro de conexão ao acionar bloco');
     }
   }, [sessionId]);
 
