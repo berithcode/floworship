@@ -55,6 +55,10 @@ async function build() {
     credentials: true,
   });
 
+  // Health check for Railway
+  fastify.get('/', async () => ({ status: 'ok' }));
+  fastify.get('/health', async () => ({ status: 'ok', uptime: process.uptime() }));
+
   // initWhatsappService(); // Disabled - using Telegram instead
 
   await fastify.register(authRoutes, { prefix: '/api' });
@@ -76,7 +80,7 @@ async function start() {
   const app = await build();
 
   try {
-    await app.listen({ port: PORT });
+    await app.listen({ port: PORT, host: '0.0.0.0' });
     console.log(`Server running on http://localhost:${PORT}`);
     
     // Inicializar WebSocket - precisa acessar o servidor interno do Fastify
