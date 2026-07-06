@@ -15,8 +15,10 @@ export const ROUTES = {
   SCHEDULES: '/schedules',
   SCHEDULES_ADMIN: '/schedules/admin',
   CHAT: '/chat',
+  TEAM: '/team',
   SETTINGS: '/settings',
   PROFILE: '/profile',
+  REPORTS: '/reports',
 } as const;
 
 export type RoutePath = typeof ROUTES[keyof typeof ROUTES];
@@ -50,6 +52,12 @@ export const NAV_GROUPS = [
     label: 'Comunicacao',
     items: [
       { label: 'Chat', path: ROUTES.CHAT, icon: 'chat' },
+    ],
+  },
+  {
+    label: 'Admin',
+    items: [
+      { label: 'Relatorios', path: ROUTES.REPORTS, icon: 'line-chart', adminOnly: true },
     ],
   },
   {

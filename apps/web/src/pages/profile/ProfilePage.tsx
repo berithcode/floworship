@@ -4,20 +4,17 @@ import { ProfileHeader } from '../../components/profile/ProfileHeader';
 import { InstrumentSelector } from '../../components/profile/InstrumentSelector';
 import { AvailabilityCycle } from '../../components/profile/AvailabilityCycle';
 import { ParticipationHistory } from '../../components/profile/ParticipationHistory';
-import { PresenceChart } from '../../components/profile/PresenceChart';
-import { DistributionChart } from '../../components/profile/DistributionChart';
 import { apiFetch } from '../../services/api';
 import type { Instrument } from '../../components/profile/InstrumentSelector';
+import { Card } from '../../components/ui/Card';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+const API_URL = import.meta.env.VITE_API_URL || '/api';
 
 export function ProfilePage() {
   const { user, refresh } = useAuth();
   const [loading, setLoading] = useState(true);
   const [instrument, setInstrument] = useState<Instrument | null>(null);
-  const [presence, setPresence] = useState({ confirmed: 0, total: 0 });
-  const [distribution, setDistribution] = useState<any[]>([]);
-  const [assignments, setAssignments] = useState<any[]>([]);
+  const [myAssignments, setMyAssignments] = useState<any[]>([]);
 
   useEffect(() => {
     if (user) {
@@ -28,18 +25,15 @@ export function ProfilePage() {
   const loadProfile = async () => {
     setLoading(true);
     try {
-      const res = await apiFetch(`${API_URL}/profile/me`);
+      const res = await apiFetch(`${API_URL}/profile/me`, { credentials: 'include' });
       if (res.ok) {
         const data = await res.json();
         setInstrument(data.instrument);
-        setPresence(data.presence || { confirmed: 0, total: 0 });
-        setDistribution(data.distribution || []);
-        setAssignments(data.assignments || []);
+        setMyAssignments(data.myAssignments || []);
       }
     } catch {
-      setPresence({ confirmed: 0, total: 0 });
-      setDistribution([]);
-      setAssignments([]);
+      setInstrument(null);
+      setMyAssignments([]);
     } finally {
       setLoading(false);
     }
@@ -50,6 +44,7 @@ export function ProfilePage() {
       await apiFetch(`${API_URL}/profile/me`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ instrument: newInstrument }),
       });
       setInstrument(newInstrument);
@@ -62,7 +57,7 @@ export function ProfilePage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-8 h-8 rounded-full border-2 border-brand-purple border-t-transparent animate-spin" />
+        <div className="w-8 h-8 rounded-full border-2 border-accent-mint border-t-transparent animate-spin" />
       </div>
     );
   }
@@ -70,45 +65,30 @@ export function ProfilePage() {
   const ministryName = user?.ministries?.[0]?.ministryId;
 
   return (
-    <div className="space-y-6 p-4 md:p-6">
-      <div className="max-w-4xl mx-auto">
-        <ProfileHeader
-          name={user?.name || 'Usuário'}
-          email={user?.email || ''}
-          role={user?.ministries?.[0]?.role || 'musician'}
-          ministryName={ministryName}
-        />
-      </div>
+    <div className="space-y-6 p-4 md:p-6 max-w-4xl mx-auto">
+      <ProfileHeader
+        name={user?.name || 'Usuário'}
+        email={user?.email || ''}
+        role={user?.ministries?.[0]?.role || 'musician'}
+        ministryName={ministryName}
+      />
 
-      <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-6">
-          <div className="p-6 bg-white/5 rounded-2xl border border-white/10">
-            <InstrumentSelector
-              currentInstrument={instrument}
-              onSave={handleSaveInstrument}
-            />
-          </div>
-
-          <div className="p-6 bg-white/5 rounded-2xl border border-white/10">
-            <AvailabilityCycle />
-          </div>
-        </div>
-
-        <div className="space-y-6">
-          <PresenceChart
-            confirmed={presence.confirmed}
-            total={presence.total}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card variant="gray-dark" padding="lg">
+          <InstrumentSelector
+            currentInstrument={instrument}
+            onSave={handleSaveInstrument}
           />
+        </Card>
 
-          <DistributionChart distribution={distribution} />
-        </div>
+        <Card variant="gray-dark" padding="lg">
+          <AvailabilityCycle />
+        </Card>
       </div>
 
-      <div className="max-w-4xl mx-auto">
-        <div className="p-6 bg-white/5 rounded-2xl border border-white/10">
-          <ParticipationHistory assignments={assignments} />
-        </div>
-      </div>
+      <Card variant="gray-dark" padding="lg">
+        <ParticipationHistory assignments={myAssignments} />
+      </Card>
     </div>
   );
 }

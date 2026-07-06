@@ -1,8 +1,8 @@
 
 import { memo } from 'react';
-import { Settings, Users, MessageSquare, Bell, Music, Guitar, Calendar } from 'lucide-react';
+import { Settings, MessageSquare, Bell, Music, Calendar } from 'lucide-react';
 
-export type SettingsTab = 'ministry' | 'members' | 'musicians' | 'config' | 'telegram' | 'notifications' | 'performance';
+export type SettingsTab = 'ministry' | 'config' | 'telegram' | 'notifications' | 'performance';
 
 interface SettingsTabsProps {
   activeTab: SettingsTab;
@@ -11,9 +11,7 @@ interface SettingsTabsProps {
 
 const tabs: { id: SettingsTab; label: string; icon: any }[] = [
   { id: 'ministry', label: 'Ministério', icon: Settings },
-  { id: 'members', label: 'Membros', icon: Users },
-  { id: 'musicians', label: 'Equipe', icon: Guitar },
-  { id: 'config', label: 'Escalas', icon: Calendar },
+  { id: 'config', label: 'Culto', icon: Calendar },
   { id: 'telegram', label: 'Telegram', icon: MessageSquare },
   { id: 'notifications', label: 'Notificações', icon: Bell },
   { id: 'performance', label: 'Performance', icon: Music },

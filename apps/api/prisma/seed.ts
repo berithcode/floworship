@@ -147,13 +147,15 @@ async function main() {
     ],
   });
 
-  await prisma.serviceRepertoireItem.createMany({
-    data: [
-      { scheduleId: schedule.id, songId: createdSongs[0].id, order: 0 },
-      { scheduleId: schedule.id, songId: createdSongs[1].id, order: 1, keyOverride: 'B' },
-      { scheduleId: schedule.id, songId: createdSongs[2].id, order: 2 },
-    ],
-  });
+  if (createdSongs.length > 0) {
+    await prisma.serviceRepertoireItem.createMany({
+      data: [
+        { scheduleId: schedule.id, songId: createdSongs[0].id, order: 0 },
+        { scheduleId: schedule.id, songId: createdSongs[1].id, order: 1, keyOverride: 'B' },
+        { scheduleId: schedule.id, songId: createdSongs[2].id, order: 2 },
+      ],
+    });
+  }
 
   console.log('Seed complete!');
   console.log(`  Ministry: ${ministry.name} (${ministry.id})`);

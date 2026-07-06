@@ -26,6 +26,7 @@ const SessionLanding = lazy(() => import('./pages/session/SessionLanding').then(
 const ServiceToday = lazy(() => import('./pages/session/MySessionToday').then(m => ({ default: m.ServiceToday })));
 const MySchedule = lazy(() => import('./pages/schedule/MySchedule').then(m => ({ default: m.MySchedule })));
 const TeamPage = lazy(() => import('./pages/team/TeamPage').then(m => ({ default: m.TeamPage })));
+const AdminReports = lazy(() => import('./pages/reports/AdminReports').then(m => ({ default: m.AdminReports })));
 
 function RouteFallback() {
   return (
@@ -177,6 +178,8 @@ function AppRoutes() {
           <Route path="/schedules" element={<ScheduleDashboard />} />
           <Route path="/my-schedule" element={<MySchedule />} />
           <Route path="/team" element={<TeamPage />} />
+          <Route path="/reports" element={<AdminReports />} />
+          <Route path="/profile" element={<ProfilePage />} />
         </Route>
 
         <Route path="/" element={<Navigate to="/dashboard" replace />} />

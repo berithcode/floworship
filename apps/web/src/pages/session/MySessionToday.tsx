@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Users, Music, Calendar, Clock, User } from 'lucide-react';
 import { getWorshipRoleLabel } from '../../constants/worshipRoles';
 import { SetlistEditor } from '../../components/setlist/SetlistEditor';
+import { Card } from '../../components/ui/Card';
+import { Button } from '../../components/ui/Button';
 
 interface TodaySession {
   hasAssignment: boolean;
@@ -50,9 +52,11 @@ export function ServiceToday() {
   if (!session?.hasAssignment) {
     return (
       <div className="p-8 text-center">
-        <Calendar className="w-16 h-16 mx-auto mb-4 text-white/20" />
-        <h2 className="text-xl font-semibold text-white mb-2">Nenhuma escala hoje</h2>
-        <p className="text-white/40 text-sm">Você não está escalado para nenhum culto hoje.</p>
+        <div className="w-16 h-16 rounded-full bg-text-primary/10 flex items-center justify-center mx-auto mb-4">
+          <Calendar className="w-8 h-8 text-text-primary/50" strokeWidth={1.5} />
+        </div>
+        <h2 className="text-xl font-semibold text-text-primary mb-2">Nenhuma escala hoje</h2>
+        <p className="text-text-primary/60 text-sm">Você não está escalado para nenhum culto hoje.</p>
       </div>
     );
   }
@@ -69,18 +73,18 @@ export function ServiceToday() {
   return (
     <div className="space-y-6 p-4 md:p-6 max-w-4xl mx-auto">
       <div>
-        <h1 className="text-2xl font-bold text-white">Serviço de Hoje</h1>
-        <p className="text-white/40 text-sm mt-1">{formattedDate}</p>
+        <h1 className="text-2xl font-bold text-text-primary">Serviço de Hoje</h1>
+        <p className="text-text-primary/60 text-sm mt-1">{formattedDate}</p>
       </div>
 
       {/* Card principal */}
-      <div className="p-6 bg-white/[0.02] rounded-2xl border border-white/[0.06]">
+      <Card variant="gray-dark" padding="lg">
         <div className="flex items-center gap-4 mb-6">
           <div className="w-12 h-12 rounded-full bg-brand-purple/20 flex items-center justify-center">
-            <User className="w-6 h-6 text-brand-purple" />
+            <User className="w-6 h-6 text-brand-purple" strokeWidth={1.5} />
           </div>
           <div>
-            <p className="text-white font-medium">Sua função: {getWorshipRoleLabel(session.role!)}</p>
+            <p className="text-text-primary font-medium">Sua função: {getWorshipRoleLabel(session.role!)}</p>
             {session.isMinister && (
               <span className="text-xs text-brand-purple">Ministro de Louvor</span>
             )}
@@ -89,20 +93,20 @@ export function ServiceToday() {
 
         {/* Equipe */}
         <div className="mb-6">
-          <h3 className="text-sm font-medium text-white/70 mb-3 flex items-center gap-2">
-            <Users className="w-4 h-4" />
+          <h3 className="text-sm font-medium text-text-primary/70 mb-3 flex items-center gap-2">
+            <Users className="w-4 h-4" strokeWidth={1.5} />
             Equipe do Dia
           </h3>
           <div className="space-y-2">
             {session.team?.map((member, i) => (
-              <div key={i} className="flex items-center justify-between p-3 bg-white/[0.02] rounded-xl">
+              <div key={i} className="flex items-center justify-between p-3 bg-bg-tertiary rounded-xl">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-xs font-medium text-white/60">
+                  <div className="w-8 h-8 rounded-full bg-text-primary/5 flex items-center justify-center text-xs font-medium text-text-primary/60">
                     {member.name.charAt(0).toUpperCase()}
                   </div>
-                  <span className="text-sm text-white">{member.name}</span>
+                  <span className="text-sm text-text-primary">{member.name}</span>
                 </div>
-                <span className="text-xs text-white/40">{getWorshipRoleLabel(member.role)}</span>
+                <span className="text-xs text-text-primary/60">{getWorshipRoleLabel(member.role)}</span>
               </div>
             ))}
           </div>
@@ -111,31 +115,28 @@ export function ServiceToday() {
         {/* Setlist */}
         <div>
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-medium text-white/70 flex items-center gap-2">
-              <Music className="w-4 h-4" />
+            <h3 className="text-sm font-medium text-text-primary/70 flex items-center gap-2">
+              <Music className="w-4 h-4" strokeWidth={1.5} />
               Setlist
             </h3>
             {session.isMinister && (
-              <button
-                onClick={() => setShowSetlist(true)}
-                className="px-3 py-1.5 bg-brand-purple/20 text-brand-purple text-xs rounded-lg hover:bg-brand-purple/30 transition-colors"
-              >
+              <Button variant="subtle" size="sm" onClick={() => setShowSetlist(true)}>
                 Editar
-              </button>
+              </Button>
             )}
           </div>
 
           {session.repertoire && session.repertoire.length > 0 ? (
             <div className="space-y-2">
               {session.repertoire.map((song, i) => (
-                <div key={song.id} className="flex items-center gap-3 p-3 bg-white/[0.02] rounded-xl">
-                  <div className="w-6 h-6 rounded flex items-center justify-center text-xs font-medium text-white/40 bg-white/5">
+                <div key={song.id} className="flex items-center gap-3 p-3 bg-bg-tertiary rounded-xl">
+                  <div className="w-6 h-6 rounded flex items-center justify-center text-xs font-medium text-text-primary/40 bg-text-primary/5">
                     {i + 1}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-white truncate">{song.title}</p>
+                    <p className="text-sm font-medium text-text-primary truncate">{song.title}</p>
                     {song.artist && (
-                      <p className="text-xs text-white/40 truncate">{song.artist}</p>
+                      <p className="text-xs text-text-primary/60 truncate">{song.artist}</p>
                     )}
                   </div>
                   {song.key && (
@@ -147,8 +148,10 @@ export function ServiceToday() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-8 text-white/40">
-              <Music className="w-12 h-12 mx-auto mb-2 opacity-30" />
+            <div className="text-center py-8 text-text-primary/60">
+              <div className="w-12 h-12 rounded-full bg-text-primary/10 flex items-center justify-center mx-auto mb-3">
+                <Music className="w-6 h-6 text-text-primary/50" strokeWidth={1.5} />
+              </div>
               <p className="text-sm">Setlist ainda não definido</p>
               {session.isMinister && (
                 <p className="text-xs mt-1">Clique em "Editar" para adicionar músicas</p>
@@ -156,34 +159,38 @@ export function ServiceToday() {
             </div>
           )}
         </div>
-      </div>
+      </Card>
 
-      {/* Botão para modo ensaio/culto */}
+      {/* Botões para modo ensaio/culto */}
       {session.scheduleId && (
         <div className="grid grid-cols-2 gap-4">
-          <button
+          <Button
+            variant="subtle"
+            size="lg"
+            icon={Clock}
             onClick={() => window.location.href = `/session/${session.scheduleId}/operador`}
-            className="flex items-center justify-center gap-2 px-4 py-3 bg-white/5 text-white rounded-xl hover:bg-white/10 transition-colors"
+            fullWidth
           >
-            <Clock className="w-4 h-4" />
             Modo Ensaio
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="primary"
+            size="lg"
+            icon={Music}
             onClick={() => window.location.href = `/session/${session.scheduleId}/operador`}
-            className="flex items-center justify-center gap-2 px-4 py-3 bg-brand-purple/20 text-brand-purple rounded-xl hover:bg-brand-purple/30 transition-colors"
+            fullWidth
           >
-            <Music className="w-4 h-4" />
             Modo Culto
-          </button>
+          </Button>
         </div>
       )}
 
       {/* Modal de Setlist */}
       {showSetlist && session.scheduleId && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4 overflow-y-auto" onClick={() => setShowSetlist(false)}>
-          <div className="bg-[#0a0a0a] rounded-2xl border border-white/10 w-full max-w-lg max-h-[90vh] overflow-y-auto my-auto" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[100] p-4 overflow-y-auto" onClick={() => setShowSetlist(false)}>
+          <Card variant="gray-dark" padding="lg" className="w-full max-w-lg max-h-[90vh] overflow-y-auto my-auto" onClick={e => e.stopPropagation()}>
             <SetlistEditor scheduleId={session.scheduleId} isMinister={true} onClose={() => setShowSetlist(false)} />
-          </div>
+          </Card>
         </div>
       )}
     </div>

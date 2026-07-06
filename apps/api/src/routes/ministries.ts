@@ -227,5 +227,104 @@ export async function ministriesRoutes(fastify: FastifyInstance) {
       return { success: true };
     }
   );
+
+  // Get ministry info
+  fastify.get<{ Params: { id: string } }>('/ministries/:id', async (request: any, reply: any) => {
+    const user = getUser(request);
+    if (!user?.ministryId || user.ministryId !== request.params.id) {
+      return reply.status(403).send({ error: 'Forbidden' });
+    }
+
+    const ministry = await prisma.ministry.findUnique({
+      where: { id: request.params.id },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        city: true,
+        website: true,
+        createdAt: true,
+      },
+    });
+
+    return ministry;
+  });
+
+  // Update ministry info
+  fastify.put<{ Params: { id: string }; Body: { name: string; description?: string; city?: string; website?: string } }>(
+    '/ministries/:id',
+    async (request: any, reply: any) => {
+      const user = getUser(request);
+      if (!user?.ministryId || user.ministryId !== request.params.id || user.role !== 'admin') {
+        return reply.status(403).send({ error: 'Forbidden' });
+      }
+
+      const { name, description, city, website } = request.body;
+
+      const ministry = await prisma.ministry.update({
+        where: { id: request.params.id },
+        data: {
+          name,
+          description,
+          city,
+          website,
+        },
+      });
+
+      return ministry;
+    }
+  );
+
+  // Get worship schedule config
+  fastify.get<{ Params: { id: string } }>('/ministries/:id/worship-schedule', async (request: any, reply: any) => {
+    const user = getUser(request);
+    if (!user?.ministryId || user.ministryId !== request.params.id) {
+      return reply.status(403).send({ error: 'Forbidden' });
+    }
+
+    const config = await prisma.ministryWorshipSchedule.findUnique({
+      where: { ministryId: request.params.id },
+    });
+
+    return config || {
+      ministryId: request.params.id,
+      worshipDays: [0],
+      worshipTime: '19:00',
+      rehearsalTime: '15:00',
+      rehearsalDay: 0,
+    };
+  });
+
+  // Update worship schedule config
+  fastify.put<{ Params: { id: string }; Body: any }>(
+    '/ministries/:id/worship-schedule',
+    async (request: any, reply: any) => {
+      const user = getUser(request);
+      if (!user?.ministryId || user.ministryId !== request.params.id || user.role !== 'admin') {
+        return reply.status(403).send({ error: 'Forbidden' });
+      }
+
+      const { worshipDays, worshipTime, rehearsalTime, rehearsalDay } = request.body;
+
+      const config = await prisma.ministryWorshipSchedule.upsert({
+        where: { ministryId: request.params.id },
+        update: {
+          worshipDays: JSON.stringify(worshipDays || [0]),
+          worshipTime: worshipTime ?? '19:00',
+          rehearsalTime: rehearsalTime ?? '15:00',
+          rehearsalDay: rehearsalDay ?? 0,
+        },
+        create: {
+          ministryId: request.params.id,
+          worshipDays: JSON.stringify(worshipDays || [0]),
+          worshipTime: worshipTime ?? '19:00',
+          rehearsalTime: rehearsalTime ?? '15:00',
+          rehearsalDay: rehearsalDay ?? 0,
+        },
+      });
+
+      return config;
+    }
+  );
 }
 

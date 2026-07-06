@@ -1,6 +1,6 @@
 
 import { memo, useState, useEffect, useCallback } from 'react';
-import { UserCheck, UserX, Clock, MessageSquare, Link, Check, Send } from 'lucide-react';
+import { UserCheck, UserX, Clock, MessageSquare, Link, Check, Send, Shield, ChevronDown } from 'lucide-react';
 import { toast } from 'sonner';
 import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
@@ -29,12 +29,14 @@ interface Invite {
 
 interface MemberManagementProps {
   ministryId: string;
+  currentUserId?: string;
+  currentUserRole?: string;
 }
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 const WEB_URL = import.meta.env.VITE_WEB_URL || window.location.origin;
 
-export const MemberManagement = memo(function MemberManagement({ ministryId }: MemberManagementProps) {
+export const MemberManagement = memo(function MemberManagement({ ministryId, currentUserId, currentUserRole }: MemberManagementProps) {
   const [members, setMembers] = useState<Member[]>([]);
   const [invites, setInvites] = useState<Invite[]>([]);
   const [loading, setLoading] = useState(true);
@@ -45,7 +47,9 @@ export const MemberManagement = memo(function MemberManagement({ ministryId }: M
   const [inviting, setInviting] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [telegramLink, setTelegramLink] = useState<string | null>(null);
-  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string; role: string } | null>(null);
+  const [editingRole, setEditingRole] = useState<{ id: string; name: string; currentRole: string } | null>(null);
+  const [savingRole, setSavingRole] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -173,6 +177,30 @@ export const MemberManagement = memo(function MemberManagement({ ministryId }: M
     }
   }, [ministryId]);
 
+  const handleRoleChange = useCallback(async (memberId: string, newRole: string) => {
+    setSavingRole(true);
+    try {
+      const res = await fetch(`${API_URL}/ministries/${ministryId}/members/${memberId}/role`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ role: newRole }),
+      });
+      if (res.ok) {
+        setMembers(prev => prev.map(m => m.id === memberId ? { ...m, role: newRole } : m));
+        setEditingRole(null);
+        toast.success('Permissão atualizada');
+      } else {
+        const data = await res.json();
+        toast.error(data.error || 'Erro ao atualizar permissão');
+      }
+    } catch {
+      toast.error('Erro ao atualizar permissão');
+    } finally {
+      setSavingRole(false);
+    }
+  }, [ministryId]);
+
   const roleLabel = (role: string) => {
     const labels: Record<string, string> = { admin: 'Admin', leader: 'Líder', musician: 'Músico', operator: 'Operador' };
     return labels[role] || role;
@@ -203,7 +231,7 @@ export const MemberManagement = memo(function MemberManagement({ ministryId }: M
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <UserCheck className="w-5 h-5 text-accent-mint" strokeWidth={1.5} aria-hidden="true" />
-            <h2 className="text-text-primary font-semibold">Membros ({members.length})</h2>
+            <h2 className="text-text-primary font-semibold">Usuários ({members.length})</h2>
           </div>
         </div>
 
@@ -219,33 +247,65 @@ export const MemberManagement = memo(function MemberManagement({ ministryId }: M
                   <p className="text-xs text-text-primary/50">{member.email}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <span className={`px-2 py-0.5 rounded-full text-xs border ${roleColor(member.role)}`}>
-                  {roleLabel(member.role)}
-                </span>
-                {member.telegramLinked ? (
-                  <span className="px-2 py-0.5 rounded-full text-xs bg-success/15 text-success border border-success/30 flex items-center gap-1">
-                    <Check className="w-3 h-3" />
-                    Telegram
+<div className="flex items-center gap-3">
+                  {member.role !== 'admin' && currentUserRole === 'admin' ? (
+                    <>
+                      {editingRole?.id === member.id ? (
+                        <div className="relative">
+                          <select
+                            value={member.role}
+                            onChange={e => handleRoleChange(member.id, e.target.value)}
+                            disabled={savingRole}
+                            className="appearance-none bg-bg-tertiary border border-border-subtle rounded-lg pl-3 pr-8 py-1 text-xs text-text-primary focus:outline-none focus:ring-2 focus:ring-accent-mint/30"
+                            onBlur={() => setEditingRole(null)}
+                            autoFocus
+                          >
+                            <option value="musician">Músico</option>
+                            <option value="operator">Operador</option>
+                            <option value="leader">Líder</option>
+                            <option value="admin">Admin</option>
+                          </select>
+                          <ChevronDown className="w-3 h-3 absolute right-2 top-1/2 -translate-y-1/2 text-text-primary/50 pointer-events-none" />
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => setEditingRole({ id: member.id, name: member.name, currentRole: member.role })}
+                          className="p-1.5 rounded-lg hover:bg-bg-tertiary transition-colors"
+                          title="Alterar permissão"
+                        >
+                          <Shield className="w-4 h-4 text-text-primary/50" strokeWidth={1.5} />
+                        </button>
+                      )}
+                    </>
+                  ) : null}
+                  <span className={`px-2 py-0.5 rounded-full text-xs border ${roleColor(member.role)}`}>
+                    {roleLabel(member.role)}
                   </span>
-                ) : (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    icon={Send}
-                    onClick={() => generateTelegramLink(member.id)}
-                    className="text-info hover:bg-info/15"
-                    title="Vincular Telegram"
-                  />
-                )}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  icon={UserX}
-                  onClick={() => setDeleteTarget({ id: member.id, name: member.name })}
-                  aria-label="Remover membro"
-                />
-              </div>
+                  {member.telegramLinked ? (
+                    <span className="px-2 py-0.5 rounded-full text-xs bg-success/15 text-success border border-success/30 flex items-center gap-1">
+                      <Check className="w-3 h-3" />
+                      Telegram
+                    </span>
+                  ) : (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      icon={Send}
+                      onClick={() => generateTelegramLink(member.id)}
+                      className="text-info hover:bg-info/15"
+                      title="Vincular Telegram"
+                    />
+                  )}
+                  {member.role !== 'admin' && member.role !== 'leader' && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      icon={UserX}
+                      onClick={() => setDeleteTarget({ id: member.id, name: member.name, role: member.role })}
+                      aria-label="Excluir usuário"
+                    />
+                  )}
+                </div>
             </div>
           ))}
         </div>
@@ -392,10 +452,10 @@ export const MemberManagement = memo(function MemberManagement({ ministryId }: M
 
       <ConfirmDialog
         open={!!deleteTarget}
-        title="Remover Membro"
-        message={`Tem certeza que deseja remover ${deleteTarget?.name} da equipe? Esta ação irá excluir permanentemente todos os dados associados ao membro.`}
-        confirmLabel="Remover"
-        cancelLabel="Manter"
+        title="Excluir Usuário"
+        message={`Tem certeza que deseja excluir ${deleteTarget?.name} (${roleLabel(deleteTarget?.role || '')})? Esta ação irá excluir permanentemente todos os dados associados ao usuário, incluindo histórico de presenças, disponibilidades e configurações. Esta ação não pode ser desfeita.`}
+        confirmLabel="Excluir Permanentemente"
+        cancelLabel="Cancelar"
         lockDuration={5}
         onConfirm={() => deleteTarget && handleRemove(deleteTarget.id)}
         onCancel={() => setDeleteTarget(null)}

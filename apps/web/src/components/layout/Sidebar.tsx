@@ -12,6 +12,7 @@ import {
   User,
   LogOut,
   Users,
+  LineChart,
 } from 'lucide-react';
 import { useRole } from '../../hooks/useRole';
 
@@ -20,9 +21,10 @@ const adminNavItems = [
   { icon: Music, label: 'Músicas', path: '/library' },
   { icon: Calendar, label: 'Escalas', path: '/schedules' },
   { icon: CalendarCheck, label: 'Minha Escala', path: '/my-schedule' },
-  { icon: Users, label: 'Equipe', path: '/team' },
+    { icon: Users, label: 'Equipe de Música', path: '/team' },
   { icon: Play, label: 'Sessão', path: '/session' },
   { icon: MessageSquare, label: 'Chat', path: '/chat' },
+  { icon: LineChart, label: 'Relatórios', path: '/reports' },
   { icon: User, label: 'Perfil', path: '/profile' },
   { icon: Settings, label: 'Configurações', path: '/settings' },
 ];

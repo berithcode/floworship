@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -70,6 +70,7 @@ model Ministry {
   whatsappLogs     WhatsAppMessageLog[]
   cycles           MonthlyScheduleCycle[]
   config           MinistryConfig?
+  worshipSchedule  MinistryWorshipSchedule?
 }
 
 model MinistryMember {
@@ -367,6 +368,16 @@ model MinistryConfig {
   availabilityDeadlineDays Int      @default(5)
   substitutionWindowHours  Int      @default(4)
   cycleTriggerDay          Int      @default(20)
+
+  ministry Ministry @relation(fields: [ministryId], references: [id], onDelete: Cascade)
+}
+
+model MinistryWorshipSchedule {
+  ministryId    String   @id
+  worshipDays   Json     @default("[0]")
+  worshipTime   String   @default("19:00")
+  rehearsalTime String   @default("15:00")
+  rehearsalDay  Int      @default(0)
 
   ministry Ministry @relation(fields: [ministryId], references: [id], onDelete: Cascade)
 }
